@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -37,7 +36,7 @@ fun VistaProyecto() {
             Text(
                 text = "ProTasker",
                 style = TextStyle(
-                    fontSize = 24.sp, // Establece el tamaño que prefieras
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 ),
@@ -80,12 +79,12 @@ fun VistaProyecto() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Default.FolderOpen, // Reemplaza con tu icono
+                        imageVector = Icons.Default.FolderOpen,
                         contentDescription = "Icono del proyecto",
                         modifier = Modifier.size(24.dp),
-                        tint = Color(0xFF2E4AAB) // El color que prefieras para el icono
+                        tint = Color(0xFF2E4AAB)
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Espacio entre el icono y el texto
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     Column(
                         modifier = Modifier
@@ -126,12 +125,12 @@ fun VistaProyecto() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Default.FolderOpen, // Reemplaza con tu icono
+                        imageVector = Icons.Default.FolderOpen,
                         contentDescription = "Icono del proyecto",
                         modifier = Modifier.size(24.dp),
-                        tint = Color(0xFF2E4AAB) // El color que prefieras para el icono
+                        tint = Color(0xFF2E4AAB)
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Espacio entre el icono y el texto
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     Column(
                         modifier = Modifier

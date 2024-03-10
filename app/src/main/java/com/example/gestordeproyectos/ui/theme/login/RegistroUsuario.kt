@@ -43,7 +43,7 @@ fun RegisterScreen() {
             modifier = Modifier
                 .background(Color(0xFF2E4AAB))
                 .fillMaxWidth()
-                .height(200.dp) // Altura de la caja azul
+                .height(200.dp)
         ) {
             Text(
                 text = "ProTasker",
@@ -61,7 +61,7 @@ fun RegisterScreen() {
         Box(
             modifier = Modifier
                 .background(Color.White)
-                .weight(1f) // Esta caja toma el espacio restante
+                .weight(1f)
         ) {
             Column(
                 modifier = Modifier
@@ -140,7 +140,7 @@ fun RegisterScreen() {
                     visualTransformation = PasswordVisualTransformation()
                 )
 
-                // Repite para Nombre completo, Correo electrónico, etc.
+
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -151,7 +151,7 @@ fun RegisterScreen() {
                         .height(50.dp),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E4AAB) // Color del botón
+                        containerColor = Color(0xFF2E4AAB)
                     )
                 ) {
                     Text(

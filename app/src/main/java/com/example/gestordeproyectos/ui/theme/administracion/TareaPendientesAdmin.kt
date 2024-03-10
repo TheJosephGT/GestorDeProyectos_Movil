@@ -1,20 +1,13 @@
-package com.example.gestordeproyectos.ui.theme.vistas
-
+package com.example.gestordeproyectos.ui.theme.administracion
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.FolderOpen
-import androidx.compose.material.icons.outlined.CheckCircleOutline
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -27,10 +20,7 @@ import androidx.compose.ui.unit.sp
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun VistaTareasPendiente() {
-    var isChecked by remember { mutableStateOf(false) }
-
-
+fun TareaPendientesAdmin() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +36,7 @@ fun VistaTareasPendiente() {
             Text(
                 text = "ProTasker",
                 style = TextStyle(
-                    fontSize = 24.sp, // Establece el tamaño que prefieras
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 ),
@@ -61,7 +51,7 @@ fun VistaTareasPendiente() {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Tareas Pendientes",
+                text = "Tareas pendientes",
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
@@ -72,7 +62,7 @@ fun VistaTareasPendiente() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Tarjeta del Proyecto Geek Engineer
+
             Card(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
@@ -88,12 +78,12 @@ fun VistaTareasPendiente() {
                         .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { isChecked = !isChecked }) {
+                    IconButton(onClick = { /* Aquí pones tu acción de edición */ }) {
                         Icon(
-                            imageVector = if (isChecked) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircleOutline,
-                            contentDescription = "Check",
-                            tint = if (isChecked) MaterialTheme.colorScheme.primary else Color.Gray,
-                            modifier = Modifier.size(24.dp)
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Editar",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color(0xFF2E4AAB)
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
@@ -104,7 +94,7 @@ fun VistaTareasPendiente() {
                             .padding(end = 16.dp)
                     ) {
                         Text(
-                            text = "Lavar la casa",
+                            text = "Geek Engineer",
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
                         )
@@ -113,15 +103,20 @@ fun VistaTareasPendiente() {
                             color = Color.Gray
                         )
                     }
-                    Icon(
-                        Icons.Filled.ArrowForward,
-                        contentDescription = "Ver más",
-                        tint = Color.Black
-                    )
+                    IconButton(onClick = { /* Aquí pones tu acción de edición */ }) {
+
+                        Icon(
+                            Icons.Filled.DeleteForever,
+                            contentDescription = "Delete",
+                            tint = Color.Black
+                        )
+
+                    }
+
                 }
             }
 
-            // Tarjeta del Proyecto VerbLearn
+
             Card(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
@@ -136,12 +131,12 @@ fun VistaTareasPendiente() {
                         .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { isChecked = !isChecked }) {
+                    IconButton(onClick = { /* Aquí pones tu acción de edición */ }) {
                         Icon(
-                            imageVector = if (isChecked) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircleOutline,
-                            contentDescription = "Check",
-                            tint = if (isChecked) MaterialTheme.colorScheme.primary else Color.Gray,
-                            modifier = Modifier.size(24.dp)
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Editar",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color(0xFF2E4AAB)
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
@@ -152,7 +147,7 @@ fun VistaTareasPendiente() {
                             .padding(end = 16.dp)
                     ) {
                         Text(
-                            text = "Planchar",
+                            text = "VerbLearn (2)",
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
                         )
@@ -161,36 +156,17 @@ fun VistaTareasPendiente() {
                             color = Color.Gray
                         )
                     }
-                    Icon(
-                        Icons.Filled.ArrowForward,
-                        contentDescription = "Ver más",
-                        tint = Color.Black
-                    )
+                    IconButton(onClick = { /* Aquí pones tu acción de edición */ }) {
+
+                        Icon(
+                            Icons.Filled.DeleteForever,
+                            contentDescription = "Delete",
+                            tint = Color.Black
+                        )
+
+                    }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-
-                },
-                Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(size = 10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2E4AAB),
-                    contentColor = Color(0xFF2E4AAB)
-                )
-            ) {
-                Text(
-                    text = "Guardar",
-                    color = Color.White,
-                    fontSize = 18.sp
-                )
-            }
-
         }
     }
 }

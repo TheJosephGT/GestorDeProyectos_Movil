@@ -50,12 +50,12 @@ fun LoginScreen() {
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                Spacer(modifier = Modifier.height(100.dp)) // Asumiendo que hay algo de espacio antes del título
+                Spacer(modifier = Modifier.height(100.dp))
 
                 Text(
                     text = "ProTasker",
                     style = TextStyle(
-                        fontSize = 24.sp, // Establece el tamaño que prefieras
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     ),
@@ -78,12 +78,12 @@ fun LoginScreen() {
             {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start // Esto alinea los hijos del Column a la izquierda
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Text(
                         text = "Inicio de sesión",
                         style = TextStyle(
-                            fontSize = 20.sp, // Establece el tamaño que prefieras
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.Black
                         ),
