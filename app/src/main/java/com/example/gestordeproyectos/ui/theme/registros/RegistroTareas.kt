@@ -1,4 +1,5 @@
 package com.example.gestordeproyectos.ui.theme.registros
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -21,7 +23,7 @@ import androidx.compose.ui.unit.sp
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun RegistrarProyectos() {
+fun RegistrarTarea() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +45,7 @@ fun RegistrarProyectos() {
                 ),
             )
         }
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(35.dp))
 
         Column(
             modifier = Modifier
@@ -51,7 +53,7 @@ fun RegistrarProyectos() {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Registro proyecto",
+                text = "Registro tarea",
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
@@ -63,7 +65,7 @@ fun RegistrarProyectos() {
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
-                label = { Text("Nombre del proyecto") },
+                label = { Text("Nombre de la tarea") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 leadingIcon = { Icon(Icons.Filled.Work, contentDescription = "Proyecto") },
@@ -94,11 +96,9 @@ fun RegistrarProyectos() {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(all = 8.dp)
-            ) {
-                Card(
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Card(
                     modifier = Modifier
                         .width(120.dp)
                         .height(40.dp),
@@ -117,17 +117,6 @@ fun RegistrarProyectos() {
                     }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
-
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Seleccionar rol") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                    modifier = Modifier.width(160.dp)
-                )
-            }
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
@@ -149,6 +138,68 @@ fun RegistrarProyectos() {
                     fontSize = 18.sp
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Panel de control",
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black
+                ),
+                modifier = Modifier.align(Alignment.Start)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Card(
+                Modifier
+                    .shadow(
+                        elevation = 48.dp,
+                        spotColor = Color(0x0A000000),
+                        ambientColor = Color(0x0A000000)
+                    )
+                    .padding(0.dp)
+                    .width(386.dp)
+                    .height(184.dp)
+                    .background(color = Color(0xFFE6ECF5), shape = RoundedCornerShape(size = 12.dp))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text("Lavar la casa", fontSize = 18.sp, color = Color.Black)
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text("Integrantes:", fontSize = 14.sp, color = Color.Black)
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row {
+                        Text("Jorge  ->", fontSize = 14.sp, color = Color.Black)
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Text("Incompleto", fontSize = 14.sp, color = Color.Red)
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row {
+                        Text("Joseph  ->", fontSize = 14.sp, color = Color.Black)
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Text("Incompleto", fontSize = 14.sp, color = Color.Green)
+                    }
+
+
+                }
+
+            }
+
         }
     }
 }
