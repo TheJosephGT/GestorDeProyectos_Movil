@@ -1,5 +1,7 @@
 package com.example.gestordeproyectos.data.remote.dto
 
+import com.example.gestordeproyectos.ui.theme.remote.dto.LoginRequest
+import com.example.gestordeproyectos.ui.theme.remote.dto.RegisterRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

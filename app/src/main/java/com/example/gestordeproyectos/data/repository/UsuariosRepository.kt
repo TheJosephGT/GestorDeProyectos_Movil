@@ -1,7 +1,8 @@
 package com.example.gestordeproyectos.data.repository
 
+import com.example.gestordeproyectos.data.dto.RegisterRequest
 import com.example.gestordeproyectos.data.remote.dto.LoginApi
-import com.example.gestordeproyectos.data.remote.dto.LoginRequest
+import com.example.gestordeproyectos.ui.theme.remote.dto.LoginRequest
 import com.example.gestordeproyectos.ui.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -27,4 +28,5 @@ class LoginRepository @Inject constructor(
             emit(Resource.Error("Verificar tu conexión a internet"))
         }
     }
+
 }

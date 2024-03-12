@@ -1,4 +1,4 @@
-package com.example.gestordeproyectos.data.remote.dto
+package com.example.gestordeproyectos.ui.theme.remote.dto
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
