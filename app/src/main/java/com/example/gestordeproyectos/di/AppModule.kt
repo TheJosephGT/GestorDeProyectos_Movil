@@ -2,6 +2,7 @@ package com.example.gestordeproyectos.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.gestordeproyectos.data.remote.dto.LoginApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -21,11 +22,12 @@ object AppModule {
     fun providesMoshi(): Moshi {
         return Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
     }
-
     @Singleton
     @Provides
-    fun providesGestorapi(moshi: Moshi){
-        return
+    fun providesGestorApi(moshi: Moshi): LoginApi {
+        return Retrofit.Builder().baseUrl("https://localhost:7145/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi)).build()
+            .create(LoginApi::class.java)
     }
 
 }
