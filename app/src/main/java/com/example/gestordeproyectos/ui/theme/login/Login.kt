@@ -164,23 +164,11 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
                     Button(
                         onClick = {
-                            uiState.usuarios.forEach { usuario ->
-                                println("ID: ${usuario.usuarioId}")
-                                println("NickName: ${usuario.nickName}")
-                                println("Nombre Completo: ${usuario.nombreCompleto}")
-                                println("Correo: ${usuario.correo}")
-                                println("Clave: ${usuario.clave}")
-                                println("Activo: ${usuario.activo}")
-                                println("-------------------")
-                            }
                             val usuario = uiState.usuarios.singleOrNull{
                                 it.correo == viewModel.correo && it.clave == viewModel.clave
                             }
                             if (usuario != null) {
-                                println(usuario.usuarioId)
                                 navController.navigate("${Destination.Home.route}/${usuario.usuarioId}")
-                            }else{
-                                println("Usuario esta vacio")
                             }
                         },
                         Modifier

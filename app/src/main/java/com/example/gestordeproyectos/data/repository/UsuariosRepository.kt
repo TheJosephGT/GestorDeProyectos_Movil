@@ -20,16 +20,6 @@ class UsuariosRepository @Inject constructor(
 
             val usuario = api.getUsuarios()
 
-            api.getUsuarios().forEach { usuario ->
-                println("ID: ${usuario.usuarioId}")
-                println("NickName: ${usuario.nickName}")
-                println("Nombre Completo: ${usuario.nombreCompleto}")
-                println("Correo: ${usuario.correo}")
-                println("Clave: ${usuario.clave}")
-                println("Activo: ${usuario.activo}")
-                println("-------------------")
-            }
-
             emit(Resource.Success(usuario))
         } catch (e: HttpException) {
             emit(Resource.Error(e.message ?: "Error HTTP"))

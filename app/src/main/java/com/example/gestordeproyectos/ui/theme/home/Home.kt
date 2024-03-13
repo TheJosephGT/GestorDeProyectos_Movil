@@ -52,7 +52,7 @@ fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel()) {
                 Spacer(modifier = Modifier.height(100.dp))
 
                 Text(
-                    text = viewModel.correo,
+                    text = "ProTasker",
                     style = TextStyle(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
@@ -81,7 +81,8 @@ fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel()) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Gestor de tareas",
+                        //Gestor de tareas
+                        text = viewModel.usuario.correo,
                         style = TextStyle(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
