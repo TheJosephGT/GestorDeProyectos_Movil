@@ -3,14 +3,13 @@ package com.example.gestordeproyectos.data.dto
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
-data class UsuarioDto(
-    @PrimaryKey
-    var usuarioId: Int? = null,
-    var nickName: String = "",
-    var nombreCompleto: String = "",
-    var correo: String = "",
-    var clave: String = "",
-    var activo: Boolean = true
+data class UsuariosDto(
+    val usuarioId: Int? = null,
+    val nickName: String = "",
+    val nombreCompleto: String = "",
+    val correo: String = "",
+    val clave: String = "",
+    val activo: Boolean = true
 )
 data class RegisterRequest(
     @field:Json(name = "NickName") val nickName: String,

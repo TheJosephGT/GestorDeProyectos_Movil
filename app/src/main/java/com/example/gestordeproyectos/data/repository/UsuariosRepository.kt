@@ -1,8 +1,9 @@
 package com.example.gestordeproyectos.data.repository
 
+import com.example.gestordeproyectos.data.UsuarioApi
+import com.example.gestordeproyectos.data.dto.LoginRequest
 import com.example.gestordeproyectos.data.dto.RegisterRequest
-import com.example.gestordeproyectos.data.remote.dto.LoginApi
-import com.example.gestordeproyectos.ui.theme.remote.dto.LoginRequest
+import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.ui.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -10,23 +11,39 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class LoginRepository @Inject constructor(
-    private val api: LoginApi
+class UsuariosRepository @Inject constructor(
+    private val api: UsuarioApi
 ) {
-    suspend fun login(loginRequest: LoginRequest): Flow<Resource<Unit>> = flow {
+    fun getUsuarios(): Flow<Resource<List<UsuariosDto>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = api.login(loginRequest)
-            if (response.isSuccessful) {
-                emit(Resource.Success(Unit))
-            } else {
-                emit(Resource.Error("Error al iniciar sesión"))
+
+            val usuario = api.getUsuarios()
+
+            api.getUsuarios().forEach { usuario ->
+                println("ID: ${usuario.usuarioId}")
+                println("NickName: ${usuario.nickName}")
+                println("Nombre Completo: ${usuario.nombreCompleto}")
+                println("Correo: ${usuario.correo}")
+                println("Clave: ${usuario.clave}")
+                println("Activo: ${usuario.activo}")
+                println("-------------------")
             }
+
+            emit(Resource.Success(usuario))
         } catch (e: HttpException) {
-            emit(Resource.Error(e.message ?: "Error HTTP GENERAL"))
+            emit(Resource.Error(e.message ?: "Error HTTP"))
         } catch (e: IOException) {
-            emit(Resource.Error("Verificar tu conexión a internet"))
+
+            emit(Resource.Error(e.message ?: "verificar tu conexion a internet"))
         }
     }
 
+
+    suspend fun getUsuarioById(id: Int): UsuariosDto? {
+        return api.getUsuarioById(id)
+    }
+    suspend fun postLogin(loginRequest: LoginRequest) = api.postLogin(loginRequest)
+    suspend fun postRegister(registerRequest: RegisterRequest) = api.postRegister(registerRequest)
+    suspend fun putUsuario(id:Int, usuario: UsuariosDto) = api.putUsuario(id, usuario)
 }

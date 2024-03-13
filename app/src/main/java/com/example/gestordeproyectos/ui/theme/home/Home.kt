@@ -1,5 +1,7 @@
 package com.example.gestordeproyectos.ui.theme.home
 
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,11 +24,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 
-@Preview(showBackground = true, showSystemUi = true)
+
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
+fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel()) {
+    DisposableEffect(Unit) {
+        viewModel.getUsuarioById(usuarioId)
+        onDispose {}
+    }
 
-fun Home() {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
@@ -42,7 +52,7 @@ fun Home() {
                 Spacer(modifier = Modifier.height(100.dp))
 
                 Text(
-                    text = "ProTasker",
+                    text = viewModel.correo,
                     style = TextStyle(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,

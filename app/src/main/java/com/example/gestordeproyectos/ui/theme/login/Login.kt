@@ -1,5 +1,8 @@
 package com.example.gestordeproyectos.ui.theme.login
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,9 +22,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,136 +40,168 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.gestordeproyectos.ui.navigation.Destination
+import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 
-fun LoginScreen() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .background(Color(0xFF2E4AAB))
-                .fillMaxWidth()
-                .height(270.dp))
-        {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Spacer(modifier = Modifier.height(100.dp))
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-                Text(
-                    text = "ProTasker",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    ),
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-        }
-
-        Box(
-            modifier = Modifier
-                .background(Color.White)
-                .weight(1f)
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ){
+        Column(modifier = Modifier.fillMaxSize()) {
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            )
+                    .background(Color(0xFF2E4AAB))
+                    .fillMaxWidth()
+                    .height(270.dp))
             {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
+                    Spacer(modifier = Modifier.height(100.dp))
+
                     Text(
-                        text = "Inicio de sesión",
+                        text = "ProTasker",
                         style = TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         ),
-                    )
-                }
-
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Usuario") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = null
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Contraseña") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null
-                        )
-                    },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    TextButton(onClick = { /* TODO */ }) {
-                        Text("Regístrate")
-                    }
-
-                    TextButton(onClick = { /* TODO */ }) {
-                        Text("¿Has olvidado tu contraseña?")
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-
-                    },
-                    Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(size = 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E4AAB),
-                        contentColor = Color(0xFF2E4AAB)
-                    )
-                ) {
-                    Text(
-                        text = "Inicio de sesión",
-                        color = Color.White,
-                        fontSize = 18.sp
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
             }
 
+            Box(
+                modifier = Modifier
+                    .background(Color.White)
+                    .weight(1f)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
+                {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = "Inicio de sesión",
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.Black
+                            ),
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = viewModel.correo,
+                        onValueChange = {viewModel.correo = it},
+                        label = { Text("Correo") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = null
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = viewModel.clave,
+                        onValueChange = {viewModel.clave = it},
+                        label = { Text("Contraseña") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = null
+                            )
+                        },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        TextButton(onClick = { /* TODO */ }) {
+                            Text("Regístrate")
+                        }
+
+                        TextButton(onClick = { /* TODO */ }) {
+                            Text("¿Has olvidado tu contraseña?")
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = {
+                            uiState.usuarios.forEach { usuario ->
+                                println("ID: ${usuario.usuarioId}")
+                                println("NickName: ${usuario.nickName}")
+                                println("Nombre Completo: ${usuario.nombreCompleto}")
+                                println("Correo: ${usuario.correo}")
+                                println("Clave: ${usuario.clave}")
+                                println("Activo: ${usuario.activo}")
+                                println("-------------------")
+                            }
+                            val usuario = uiState.usuarios.singleOrNull{
+                                it.correo == viewModel.correo && it.clave == viewModel.clave
+                            }
+                            if (usuario != null) {
+                                println(usuario.usuarioId)
+                                navController.navigate("${Destination.Home.route}/${usuario.usuarioId}")
+                            }else{
+                                println("Usuario esta vacio")
+                            }
+                        },
+                        Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(size = 10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2E4AAB),
+                            contentColor = Color(0xFF2E4AAB)
+                        )
+                    ) {
+                        Text(
+                            text = "Inicia sesión",
+                            color = Color.White,
+                            fontSize = 18.sp
+                        )
+                    }
+                }
+
+            }
         }
+
     }
 }

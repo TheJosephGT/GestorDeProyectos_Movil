@@ -1,0 +1,115 @@
+package com.example.gestordeproyectos.ui.navigation
+
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresExtension
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.gestordeproyectos.R
+import com.example.gestordeproyectos.ui.theme.home.Home
+import com.example.gestordeproyectos.ui.theme.login.LoginScreen
+
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+@Composable
+fun AppScreen() {
+    val navController = rememberNavController()
+
+    Scaffold(
+        bottomBar = { BottomNavigationBar(navController = navController, appItems = Destination.toList) },
+        content = { padding ->
+            Box(modifier = Modifier.padding(padding)) {
+                AppNavigation(navController = navController)
+            }
+        }
+    )
+}
+
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+@Composable
+fun AppNavigation(navController: NavHostController) {
+
+    NavHost(
+        navController,
+        startDestination = Destination.Login.route,
+    ) {
+        composable(Destination.Login.route) {
+            LoginScreen(navController)
+        }
+        composable(
+            "${Destination.Home.route}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { capturar ->
+            val id = capturar.arguments?.getInt("id") ?: 0
+
+            Home(usuarioId = id)
+        }
+    }
+}
+
+@Composable
+fun BottomNavigationBar(navController: NavController, appItems: List<Destination>) {
+
+    BottomAppBar(
+        containerColor = Color(0xFF2E4AAB),
+        contentColor = Color.White
+    ) {
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            items(appItems) { appitem ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate(appitem.route)
+                        }
+                        .padding(horizontal = 33.dp)
+                ) {
+                    Icon(
+                        imageVector = appitem.icon,
+                        contentDescription = appitem.title
+                    )
+                    Text(
+                        text = appitem.title,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+}

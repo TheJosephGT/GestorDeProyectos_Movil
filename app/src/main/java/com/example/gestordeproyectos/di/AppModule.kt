@@ -1,14 +1,12 @@
 package com.example.gestordeproyectos.di
 
-import android.content.Context
-import androidx.room.Room
-import com.example.gestordeproyectos.data.remote.dto.LoginApi
+import com.example.gestordeproyectos.data.UsuarioApi
+import com.example.gestordeproyectos.data.repository.UsuariosRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -24,10 +22,18 @@ object AppModule {
     }
     @Singleton
     @Provides
-    fun providesGestorApi(moshi: Moshi): LoginApi {
-        return Retrofit.Builder().baseUrl("https://localhost:7145/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi)).build()
-            .create(LoginApi::class.java)
+    fun providesUsuariosApi(moshi: Moshi): UsuarioApi {
+        return Retrofit.Builder()
+            .baseUrl("https://localhost:7145/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(UsuarioApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUsuariosRepository(usuarioApi: UsuarioApi): UsuariosRepository {
+        return UsuariosRepository(usuarioApi)
     }
 
 }
