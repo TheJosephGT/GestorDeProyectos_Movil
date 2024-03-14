@@ -1,6 +1,5 @@
 package com.example.gestordeproyectos.data
 
-import com.example.gestordeproyectos.data.dto.LoginRequest
 import com.example.gestordeproyectos.data.dto.RegisterRequest
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import retrofit2.Response
@@ -17,11 +16,6 @@ interface UsuarioApi {
     suspend fun getUsuarioById(@Path("id") id: Int): UsuariosDto?
     @POST("api/Usuarios/register")
     suspend fun postRegister(@Body registerRequest: RegisterRequest): Response<RegisterRequest>
-    @POST("api/Usuarios")
-    suspend fun postUsuario(@Body usuario: UsuariosDto): Response<UsuariosDto>
     @PUT("api/Usuarios/{id}")
     suspend fun putUsuario(@Path("id") id:Int, @Body usuario: UsuariosDto): Response<Unit>
-
-    @POST("api/Usuarios/login")
-    suspend fun postLogin(@Body loginRequest: LoginRequest): Response<LoginRequest>
 }

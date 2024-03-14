@@ -82,8 +82,7 @@ fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel()) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        //Gestor de tareas
-                        text = viewModel.usuario.correo,
+                        text = "Gestor de tareas",
                         style = TextStyle(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
@@ -130,7 +129,7 @@ fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel()) {
                     )
                 ) {
                     Text(
-                        text = "Ver tareas",
+                        text = "Ver proyectos",
                         color = Color.White,
                         fontSize = 18.sp
                     )

@@ -1,7 +1,6 @@
 package com.example.gestordeproyectos.data.repository
 
 import com.example.gestordeproyectos.data.UsuarioApi
-import com.example.gestordeproyectos.data.dto.LoginRequest
 import com.example.gestordeproyectos.data.dto.RegisterRequest
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.ui.util.Resource
@@ -33,8 +32,6 @@ class UsuariosRepository @Inject constructor(
     suspend fun getUsuarioById(id: Int): UsuariosDto? {
         return api.getUsuarioById(id)
     }
-    suspend fun postLogin(loginRequest: LoginRequest) = api.postLogin(loginRequest)
     suspend fun postRegister(registerRequest: RegisterRequest) = api.postRegister(registerRequest)
-    suspend fun postUsuario(usuario: UsuariosDto) = api.postUsuario(usuario)
     suspend fun putUsuario(id:Int, usuario: UsuariosDto) = api.putUsuario(id, usuario)
 }

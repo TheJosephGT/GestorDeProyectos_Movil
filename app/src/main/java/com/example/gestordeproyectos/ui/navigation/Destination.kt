@@ -24,6 +24,11 @@ sealed class Destination(val route: String, val icon: ImageVector, val title: St
         route = "RegistroUsuario", icon = Icons.Filled.Star,
         title = "RegistroUsuario"
     )
+    object RegistrarProyecto : Destination(
+        route = "RegistrarProyecto", icon = Icons.Filled.Star,
+        title = "RegistrarProyecto"
+    )
+
 
     companion object {
         val toList = listOf(Home)
