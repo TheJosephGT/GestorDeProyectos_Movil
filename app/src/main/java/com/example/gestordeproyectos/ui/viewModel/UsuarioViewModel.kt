@@ -45,23 +45,28 @@ class LoginViewModel @Inject constructor(
     var correoError by mutableStateOf(true)
     var claveError by mutableStateOf(true)
 
+    var loginError by mutableStateOf(false)
+    var registerError by mutableStateOf(false)
+
     fun ValidarLogin(): Boolean {
 
         correoError = correo.isNotEmpty()
         claveError = clave.isNotEmpty()
 
-        return (correoError || claveError)
+        return correoError && claveError && uiState.value.usuarios.any { it.correo == correo && it.clave == clave }
     }
+
 
     fun ValidarRegistro(): Boolean {
 
         nickNameError = nickName.isNotEmpty()
-        nombreCompletoError = nombreCompleto.isNotEmpty()
+        nombreCompletoError = nombreCompleto.split(" ").size >= 2
         correoError = correo.isNotEmpty()
-        claveError = clave.isNotEmpty()
+        claveError =  clave.isEmpty()
 
-        return (nickNameError || nombreCompletoError || correoError || claveError)
+        return !(nickNameError && nombreCompletoError && correoError && claveError)
     }
+
 
     private val _uiState = MutableStateFlow(UsuarioListState())
     val uiState: StateFlow<UsuarioListState> = _uiState.asStateFlow()
@@ -90,19 +95,23 @@ class LoginViewModel @Inject constructor(
     }
 
     fun send() {
-        viewModelScope.launch {
-            val usuarios = RegisterRequest(
-                nickName = nickName,
-                nombreCompleto = nombreCompleto,
-                correo = correo,
-                clave = clave
-            )
-            usuariosRepository.postRegister(usuarios)
-            clear()
-            cargar()
-
+        if (ValidarRegistro()) {
+            viewModelScope.launch {
+                val usuarios = RegisterRequest(
+                    nickName = nickName,
+                    nombreCompleto = nombreCompleto,
+                    correo = correo,
+                    clave = clave
+                )
+                usuariosRepository.postRegister(usuarios)
+                clear()
+                cargar()
+            }
+        } else {
+            registerError = true
         }
     }
+
 
     fun getUsuarioById(id: Int) {
         viewModelScope.launch {

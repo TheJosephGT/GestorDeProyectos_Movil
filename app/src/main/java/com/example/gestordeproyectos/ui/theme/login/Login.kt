@@ -23,11 +23,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
+import kotlinx.coroutines.delay
 
 //@Preview(showBackground = true, showSystemUi = true)
 @OptIn(ExperimentalComposeUiApi::class)
@@ -61,13 +64,14 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
-    ){
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
                     .background(Color(0xFF2E4AAB))
                     .fillMaxWidth()
-                    .height(270.dp))
+                    .height(270.dp)
+            )
             {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -121,7 +125,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         Column {
                             OutlinedTextField(
                                 value = viewModel.correo,
-                                onValueChange = {viewModel.correo = it},
+                                onValueChange = { viewModel.correo = it },
                                 label = { Text("Correo") },
                                 leadingIcon = {
                                     Icon(
@@ -139,11 +143,11 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    Row{
+                    Row {
                         Column {
                             OutlinedTextField(
                                 value = viewModel.clave,
-                                onValueChange = {viewModel.clave = it},
+                                onValueChange = { viewModel.clave = it },
                                 label = { Text("Contraseña") },
                                 leadingIcon = {
                                     Icon(
@@ -181,13 +185,15 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                     Button(
                         onClick = {
                             keyboardController?.hide()
-                            if(viewModel.ValidarLogin()){
-                                val usuario = uiState.usuarios.singleOrNull{
+                            if (viewModel.ValidarLogin()) {
+                                val usuario = uiState.usuarios.singleOrNull {
                                     it.correo == viewModel.correo && it.clave == viewModel.clave
                                 }
                                 if (usuario != null) {
                                     navController.navigate("${Destination.Home.route}/${usuario.usuarioId}")
                                 }
+                            } else {
+                                viewModel.loginError = true
                             }
                         },
                         Modifier
@@ -206,9 +212,29 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         )
                     }
                 }
-
+            }
+            if (viewModel.loginError) {
+                Snackbar(
+                    action = {
+                        TextButton(
+                            onClick = { viewModel.loginError = false },
+                            colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                        ) {
+                            Text(text = "OK")
+                        }
+                    },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(
+                        text = "Los datos no son correctos.",
+                        color = Color.Red
+                    )
+                }
+                LaunchedEffect(Unit) {
+                    delay(10000)
+                    viewModel.loginError = false
+                }
             }
         }
-
     }
 }

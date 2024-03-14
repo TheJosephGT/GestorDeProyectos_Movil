@@ -25,11 +25,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -47,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
+import kotlinx.coroutines.delay
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalComposeUiApi::class)
@@ -55,10 +59,15 @@ import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val contrasenaConfirmacion = remember { mutableStateOf("") }
+    val registroExitoso = remember {
+        mutableStateOf(false)
+    }
+    val allFieldsCompleted = remember {
+        mutableStateOf(false)
+    } // Si todo los campos estan validando
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ){
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
@@ -67,13 +76,9 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                     .height(200.dp)
             ) {
                 Text(
-                    text = "ProTasker",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    ),
-                    modifier = Modifier
+                    text = "ProTasker", style = TextStyle(
+                        fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White
+                    ), modifier = Modifier
                         .align(Alignment.Center)
                         .padding(16.dp)
                 )
@@ -90,87 +95,131 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Registro",
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
-                        ),
-                        modifier = Modifier.align(Alignment.Start)
+                        text = "Registro", style = TextStyle(
+                            fontSize = 20.sp, fontWeight = FontWeight.Medium, color = Color.Black
+                        ), modifier = Modifier.align(Alignment.Start)
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    OutlinedTextField(
-                        value = viewModel.nickName,
-                        onValueChange = {viewModel.nickName = it},
+                    OutlinedTextField(value = viewModel.nickName,
+                        onValueChange = { viewModel.nickName = it },
                         label = { Text("Nickname") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = "Nickname") }
-                    )
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Person, contentDescription = "Nickname"
+                            )
+                        })
+                    if (!viewModel.nickNameError && viewModel.nickName.isBlank()) {
+                        Text(
+                            text = "Debe ingresar un nickname", color = Color.Red
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    OutlinedTextField(
-                        value = viewModel.nombreCompleto,
-                        onValueChange = {viewModel.nombreCompleto = it},
+                    OutlinedTextField(value = viewModel.nombreCompleto,
+                        onValueChange = { viewModel.nombreCompleto = it },
                         label = { Text("Nombre completo") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { Icon(Icons.Default.Badge, contentDescription = "Nombre completo") }
-                    )
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Badge, contentDescription = "Nombre completo"
+                            )
+                        })
+                    if (!viewModel.nombreCompletoError && viewModel.nombreCompleto.isBlank()) {
+                        Text(
+                            text = "Debe ingresar un nombre.", color = Color.Red
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    OutlinedTextField(
-                        value = viewModel.correo,
-                        onValueChange = {viewModel.correo = it},
+                    OutlinedTextField(value = viewModel.correo,
+                        onValueChange = { viewModel.correo = it },
                         label = { Text("Correo Electrónico") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Correo Electrónico") }
-                    )
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Email, contentDescription = "Correo Electrónico"
+                            )
+                        })
+                    val correoPattern = Regex("^\\S+@\\S+\\.com\$")
+                    if (viewModel.correoError && viewModel.correo.isNotBlank()) {
+                        if (!correoPattern.matches(viewModel.correo)) {
+                            Text(
+                                text = "El formato del correo electrónico es incorrecto.",
+                                color = Color.Red
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
                         value = viewModel.clave,
-                        onValueChange = {viewModel.clave = it},
+                        onValueChange = { viewModel.clave = it },
                         label = { Text("Contraseña") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Contraseña") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Lock, contentDescription = "Contraseña"
+                            )
+                        },
                         visualTransformation = PasswordVisualTransformation()
                     )
+                    if (viewModel.clave.length < 6) {
+                        Text(
+                            text = "La contraseña debe tener al menos 6 caracteres.",
+                            color = Color.Red
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
+                        value = contrasenaConfirmacion.value,
+                        onValueChange = { contrasenaConfirmacion.value = it },
                         label = { Text("Confirmar contraseña") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Confirmar Contraseña") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Lock, contentDescription = "Confirmar Contraseña"
+                            )
+                        },
                         visualTransformation = PasswordVisualTransformation()
                     )
-
+                    if (contrasenaConfirmacion.value != viewModel.clave) {
+                        Text(
+                            text = "Las contraseñas no coinciden.", color = Color.Red
+                        )
+                    }
 
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // validacion para el boton
+                    allFieldsCompleted.value =
+                        viewModel.nickName.isNotBlank() && viewModel.nombreCompleto.isNotBlank() && viewModel.correo.isNotBlank() && viewModel.clave.isNotBlank() && viewModel.clave.length >= 6 && contrasenaConfirmacion.value == viewModel.clave
+
                     Button(
                         onClick = {
                             keyboardController?.hide()
-                            if(viewModel.ValidarRegistro()){
+                            if (allFieldsCompleted.value && viewModel.ValidarRegistro() && viewModel.ValidarRegistro()) {
                                 viewModel.send()
-                                navController.navigate(Destination.Login.route)
+                                registroExitoso.value = true
                             }
                         },
                         modifier = Modifier
@@ -182,13 +231,53 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                         )
                     ) {
                         Text(
-                            text = "Registrar",
-                            color = Color.White,
-                            fontSize = 18.sp
+                            text = "Registrar", color = Color.White, fontSize = 18.sp
                         )
                     }
+
                 }
             }
+        }
+        if (viewModel.registerError) {
+            Snackbar(
+                action = {
+                    TextButton(
+                        onClick = { viewModel.registerError = false },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                    ) {
+                        Text(text = "OK")
+                    }
+                }, modifier = Modifier.padding(8.dp)
+            ) {
+                Text(
+                    text = "Error al registrar. Por favor, verifica tus datos.", color = Color.Red
+                )
+            }
+            LaunchedEffect(Unit) {
+                delay(10000)
+                viewModel.registerError = false
+            }
+        }
+        if (registroExitoso.value) {
+            Snackbar(
+                action = {
+                    TextButton(
+                        onClick = { registroExitoso.value = false },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                    ) {
+                        Text(text = "OK")
+                    }
+                }, modifier = Modifier.padding(8.dp)
+            ) {
+                Text(
+                    text = "¡Registro exitoso!", color = Color.Green
+                )
+            }
+            LaunchedEffect(Unit) {
+                delay(5000) // Delay de 5 segundos
+                navController.navigate(Destination.Login.route)
+            }
+
         }
     }
 }
