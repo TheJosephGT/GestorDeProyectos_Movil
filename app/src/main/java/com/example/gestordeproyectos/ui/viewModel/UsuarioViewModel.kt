@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.ViewModel
+import com.example.gestordeproyectos.data.dto.RegisterRequest
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.data.repository.UsuariosRepository
 import com.example.gestordeproyectos.ui.util.Resource
@@ -34,18 +35,32 @@ class LoginViewModel @Inject constructor(
     private val usuariosRepository: UsuariosRepository
 ) : ViewModel() {
     var usuario by mutableStateOf(UsuariosDto())
+    var nickName by mutableStateOf("")
+    var nombreCompleto by mutableStateOf("")
     var correo by mutableStateOf("")
     var clave by mutableStateOf("")
 
+    var nickNameError by mutableStateOf(true)
+    var nombreCompletoError by mutableStateOf(true)
     var correoError by mutableStateOf(true)
     var claveError by mutableStateOf(true)
 
-    fun Validar(): Boolean {
+    fun ValidarLogin(): Boolean {
 
         correoError = correo.isNotEmpty()
         claveError = clave.isNotEmpty()
 
-        return !(correo == "" || clave == "")
+        return (correoError || claveError)
+    }
+
+    fun ValidarRegistro(): Boolean {
+
+        nickNameError = nickName.isNotEmpty()
+        nombreCompletoError = nombreCompleto.isNotEmpty()
+        correoError = correo.isNotEmpty()
+        claveError = clave.isNotEmpty()
+
+        return (nickNameError || nombreCompletoError || correoError || claveError)
     }
 
     private val _uiState = MutableStateFlow(UsuarioListState())
@@ -74,9 +89,31 @@ class LoginViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun send() {
+        viewModelScope.launch {
+            val usuarios = RegisterRequest(
+                nickName = nickName,
+                nombreCompleto = nombreCompleto,
+                correo = correo,
+                clave = clave
+            )
+            usuariosRepository.postRegister(usuarios)
+            clear()
+            cargar()
+
+        }
+    }
+
     fun getUsuarioById(id: Int) {
         viewModelScope.launch {
             usuario = usuariosRepository.getUsuarioById(id)!!
         }
+    }
+
+    fun clear(){
+        nickName = ""
+        nombreCompleto = ""
+        correo = ""
+        clave = ""
     }
 }

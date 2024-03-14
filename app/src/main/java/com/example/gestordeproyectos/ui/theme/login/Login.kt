@@ -31,8 +31,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -47,6 +49,7 @@ import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 
 //@Preview(showBackground = true, showSystemUi = true)
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -54,6 +57,7 @@ import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -113,37 +117,49 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
 
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    OutlinedTextField(
-                        value = viewModel.correo,
-                        onValueChange = {viewModel.correo = it},
-                        label = { Text("Correo") },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Email,
-                                contentDescription = null
+                    Row {
+                        Column {
+                            OutlinedTextField(
+                                value = viewModel.correo,
+                                onValueChange = {viewModel.correo = it},
+                                label = { Text("Correo") },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Email,
+                                        contentDescription = null
+                                    )
+                                },
+                                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                                modifier = Modifier.fillMaxWidth()
                             )
-                        },
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                            if (!viewModel.correoError) {
+                                Text(text = "El campo correo esta vacío", color = Color.Red)
+                            }
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    OutlinedTextField(
-                        value = viewModel.clave,
-                        onValueChange = {viewModel.clave = it},
-                        label = { Text("Contraseña") },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Lock,
-                                contentDescription = null
+                    Row{
+                        Column {
+                            OutlinedTextField(
+                                value = viewModel.clave,
+                                onValueChange = {viewModel.clave = it},
+                                label = { Text("Contraseña") },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Lock,
+                                        contentDescription = null
+                                    )
+                                },
+                                visualTransformation = PasswordVisualTransformation(),
+                                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                                modifier = Modifier.fillMaxWidth()
                             )
-                        },
-                        visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                            if (!viewModel.claveError) {
+                                Text(text = "El campo clave esta vacío", color = Color.Red)
+                            }
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
@@ -151,7 +167,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        TextButton(onClick = { /* TODO */ }) {
+                        TextButton(onClick = { navController.navigate(Destination.RegistroUsuario.route) }) {
                             Text("Regístrate")
                         }
 
@@ -164,11 +180,14 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
                     Button(
                         onClick = {
-                            val usuario = uiState.usuarios.singleOrNull{
-                                it.correo == viewModel.correo && it.clave == viewModel.clave
-                            }
-                            if (usuario != null) {
-                                navController.navigate("${Destination.Home.route}/${usuario.usuarioId}")
+                            keyboardController?.hide()
+                            if(viewModel.ValidarLogin()){
+                                val usuario = uiState.usuarios.singleOrNull{
+                                    it.correo == viewModel.correo && it.clave == viewModel.clave
+                                }
+                                if (usuario != null) {
+                                    navController.navigate("${Destination.Home.route}/${usuario.usuarioId}")
+                                }
                             }
                         },
                         Modifier

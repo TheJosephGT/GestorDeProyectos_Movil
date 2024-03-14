@@ -35,5 +35,6 @@ class UsuariosRepository @Inject constructor(
     }
     suspend fun postLogin(loginRequest: LoginRequest) = api.postLogin(loginRequest)
     suspend fun postRegister(registerRequest: RegisterRequest) = api.postRegister(registerRequest)
+    suspend fun postUsuario(usuario: UsuariosDto) = api.postUsuario(usuario)
     suspend fun putUsuario(id:Int, usuario: UsuariosDto) = api.putUsuario(id, usuario)
 }

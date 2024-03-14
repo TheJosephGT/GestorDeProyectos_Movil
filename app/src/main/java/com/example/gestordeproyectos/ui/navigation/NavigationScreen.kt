@@ -42,14 +42,20 @@ import androidx.navigation.navArgument
 import com.example.gestordeproyectos.R
 import com.example.gestordeproyectos.ui.theme.home.Home
 import com.example.gestordeproyectos.ui.theme.login.LoginScreen
+import com.example.gestordeproyectos.ui.theme.login.RegisterScreen
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun AppScreen() {
     val navController = rememberNavController()
+    val currentDestination = navController.currentBackStackEntryAsState()
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController = navController, appItems = Destination.toList) },
+        bottomBar = {
+            if(currentDestination.value?.destination?.route !in listOf(Destination.Login.route, Destination.RegistroUsuario.route)){
+                BottomNavigationBar(navController = navController, appItems = Destination.toList)
+            }
+                     },
         content = { padding ->
             Box(modifier = Modifier.padding(padding)) {
                 AppNavigation(navController = navController)
@@ -76,6 +82,9 @@ fun AppNavigation(navController: NavHostController) {
             val id = capturar.arguments?.getInt("id") ?: 0
 
             Home(usuarioId = id)
+        }
+        composable(Destination.RegistroUsuario.route){
+            RegisterScreen(navController)
         }
     }
 }

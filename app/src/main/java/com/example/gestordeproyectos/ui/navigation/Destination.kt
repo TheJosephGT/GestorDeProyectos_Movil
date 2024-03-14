@@ -20,9 +20,9 @@ sealed class Destination(val route: String, val icon: ImageVector, val title: St
         title = "Home"
     )
 
-    object Favorites : Destination(
-        route = "Favorites", icon = Icons.Filled.Star,
-        title = "Favorites"
+    object RegistroUsuario : Destination(
+        route = "RegistroUsuario", icon = Icons.Filled.Star,
+        title = "RegistroUsuario"
     )
 
     companion object {
