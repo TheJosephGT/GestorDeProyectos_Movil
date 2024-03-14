@@ -134,7 +134,7 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                         })
                     if (!viewModel.nombreCompletoError && viewModel.nombreCompleto.isBlank()) {
                         Text(
-                            text = "Debe ingresar un nombre.", color = Color.Red
+                            text = "Debe ingresar un nombre completo.", color = Color.Red
                         )
                     }
 
@@ -177,7 +177,7 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                         },
                         visualTransformation = PasswordVisualTransformation()
                     )
-                    if (viewModel.clave.length < 6) {
+                    if (viewModel.claveError) {
                         Text(
                             text = "La contraseña debe tener al menos 6 caracteres.",
                             color = Color.Red

@@ -60,9 +60,9 @@ class LoginViewModel @Inject constructor(
     fun ValidarRegistro(): Boolean {
 
         nickNameError = nickName.isNotEmpty()
-        nombreCompletoError = nombreCompleto.split(" ").size >= 2
+        nombreCompletoError = nombreCompleto.isNotEmpty()
         correoError = correo.isNotEmpty()
-        claveError =  clave.isEmpty()
+        claveError =  clave.isEmpty() && clave.length < 6
 
         return !(nickNameError && nombreCompletoError && correoError && claveError)
     }
