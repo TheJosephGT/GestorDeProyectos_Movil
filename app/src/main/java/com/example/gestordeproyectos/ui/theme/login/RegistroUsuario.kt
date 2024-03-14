@@ -169,6 +169,7 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                         onClick = {
                             keyboardController?.hide()
                             if(viewModel.ValidarRegistro()){
+                                viewModel.send()
                                 navController.navigate(Destination.Login.route)
                             }
                         },

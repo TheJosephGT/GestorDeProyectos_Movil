@@ -33,6 +33,7 @@ import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel()) {
     DisposableEffect(Unit) {
         viewModel.getUsuarioById(usuarioId)
+        viewModel.cargar()
         onDispose {}
     }
 
