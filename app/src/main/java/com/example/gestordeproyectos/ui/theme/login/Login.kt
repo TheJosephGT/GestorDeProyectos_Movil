@@ -188,9 +188,12 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         onClick = {
                             keyboardController?.hide()
                             if (viewModel.ValidarLogin()) {
+
                                 val usuario = uiState.usuarios.singleOrNull {
                                     it.correo == viewModel.correo && it.clave == viewModel.clave && it.activo
                                 }
+
+                                println(uiState.usuarios.count())
                                 if (usuario != null) {
                                     navController.navigate("${Destination.Home.route}/${usuario.usuarioId}")
                                 }

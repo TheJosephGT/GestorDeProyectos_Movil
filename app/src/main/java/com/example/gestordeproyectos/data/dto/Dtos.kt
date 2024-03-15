@@ -14,7 +14,6 @@ data class UsuariosDto(
     val correo: String = "",
     val clave: String = "",
     val activo: Boolean = true,
-    @Relation(parentColumn = "usuarioId", entityColumn = "usuarioId")
     val usuarioProyectos: List<UsuarioProyectos> = listOf()
 )
 data class UsuarioProyectos(
@@ -23,7 +22,6 @@ data class UsuarioProyectos(
     val usuarioId: Int? = null,
     val rol: String = "",
     val activo: Boolean = true,
-    @Relation(parentColumn = "usuarioProyectoId", entityColumn = "usuarioProyectoId")
     val usuarioTareas: List<UsuarioTareas> = listOf()
 )
 data class UsuarioTareas(
@@ -61,8 +59,6 @@ data class Proyectos(
     val progreso: Double,
     val creador: Int? = null,
     val activo: Boolean = true,
-    @Relation(parentColumn = "proyectoId", entityColumn = "proyectoId")
     val usuarioProyectos: List<UsuarioProyectos> = listOf(),
-    @Relation(parentColumn = "proyectoId", entityColumn = "proyectoId")
     val tareasProyecto: List<TareasProyecto> = listOf()
 )

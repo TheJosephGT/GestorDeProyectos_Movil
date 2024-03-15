@@ -24,7 +24,7 @@ object AppModule {
     @Provides
     fun providesUsuariosApi(moshi: Moshi): UsuarioApi {
         return Retrofit.Builder()
-            .baseUrl("http://www.gestorapi.somee.com/")
+            .baseUrl("http://gestorapinew.somee.com/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(UsuarioApi::class.java)
