@@ -1,18 +1,12 @@
 package com.example.gestordeproyectos.data.dto
 
-import androidx.room.Relation
-data class RegisterRequest(
-    val nickName: String = "",
-    val nombreCompleto: String = "",
-    val correo: String = "",
-    val clave: String = "",
-)
 data class UsuariosDto(
     val usuarioId: Int? = null,
     val nickName: String = "",
     val nombreCompleto: String = "",
     val correo: String = "",
     val clave: String = "",
+    val rol: String = "",
     val activo: Boolean = true,
     val usuarioProyectos: List<UsuarioProyectos> = listOf()
 )
@@ -20,7 +14,6 @@ data class UsuarioProyectos(
     val usuarioProyectoId: Int? = null,
     val proyectoId: Int? = null,
     val usuarioId: Int? = null,
-    val rol: String = "",
     val activo: Boolean = true,
     val usuarioTareas: List<UsuarioTareas> = listOf()
 )

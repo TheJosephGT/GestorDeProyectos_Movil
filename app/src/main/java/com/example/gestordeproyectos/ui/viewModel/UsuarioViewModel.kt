@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.ViewModel
-import com.example.gestordeproyectos.data.dto.RegisterRequest
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.data.repository.UsuariosRepository
 import com.example.gestordeproyectos.ui.util.Resource
@@ -38,12 +37,14 @@ class LoginViewModel @Inject constructor(
     var nickName by mutableStateOf("")
     var nombreCompleto by mutableStateOf("")
     var correo by mutableStateOf("")
+    var rol by mutableStateOf("")
     var clave by mutableStateOf("")
 
     var nickNameError by mutableStateOf(true)
     var nombreCompletoError by mutableStateOf(true)
     var correoError by mutableStateOf(true)
     var claveError by mutableStateOf(true)
+    var rolError by mutableStateOf(true)
 
     var loginError by mutableStateOf(false)
     var registerError by mutableStateOf(false)
@@ -63,6 +64,7 @@ class LoginViewModel @Inject constructor(
         nombreCompletoError = nombreCompleto.isNotEmpty()
         correoError = correo.isNotEmpty()
         claveError =  clave.isEmpty() && clave.length < 6
+        rolError = rol.isNotEmpty()
 
         return !(nickNameError && nombreCompletoError && correoError && claveError)
     }
@@ -97,13 +99,14 @@ class LoginViewModel @Inject constructor(
     fun send() {
         if (ValidarRegistro()) {
             viewModelScope.launch {
-                val usuarios = RegisterRequest(
+                val usuarios = UsuariosDto(
                     nickName = nickName,
                     nombreCompleto = nombreCompleto,
                     correo = correo,
+                    rol = rol,
                     clave = clave
                 )
-                usuariosRepository.postRegister(usuarios)
+                usuariosRepository.postUsuarios(usuarios)
                 clear()
                 cargar()
             }

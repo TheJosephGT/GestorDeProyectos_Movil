@@ -1,7 +1,6 @@
 package com.example.gestordeproyectos.data.repository
 
 import com.example.gestordeproyectos.data.UsuarioApi
-import com.example.gestordeproyectos.data.dto.RegisterRequest
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.ui.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +31,6 @@ class UsuariosRepository @Inject constructor(
     suspend fun getUsuarioById(id: Int): UsuariosDto? {
         return api.getUsuarioById(id)
     }
-    suspend fun postRegister(registerRequest: RegisterRequest) = api.postRegister(registerRequest)
+    suspend fun postUsuarios(usuario: UsuariosDto) = api.postUsuarios(usuario)
     suspend fun putUsuario(id:Int, usuario: UsuariosDto) = api.putUsuario(id, usuario)
 }

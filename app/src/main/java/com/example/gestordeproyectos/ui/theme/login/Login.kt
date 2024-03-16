@@ -169,21 +169,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        TextButton(onClick = { navController.navigate(Destination.RegistroUsuario.route) }) {
-                            Text("Regístrate")
-                        }
-
-                        TextButton(onClick = { /* TODO */ }) {
-                            Text("¿Has olvidado tu contraseña?")
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     Button(
                         onClick = {
                             keyboardController?.hide()

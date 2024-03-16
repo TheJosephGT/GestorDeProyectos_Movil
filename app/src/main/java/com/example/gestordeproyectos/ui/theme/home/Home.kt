@@ -25,12 +25,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel()) {
+fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel(), navController: NavController) {
     DisposableEffect(Unit) {
         viewModel.getUsuarioById(usuarioId)
         viewModel.cargar()
@@ -93,49 +96,128 @@ fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel()) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
-                    onClick = {
-
-                    },
-                    Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(size = 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E4AAB),
-                        contentColor = Color(0xFF2E4AAB)
-                    )
-                ) {
-                    Text(
-                        text = "Crear Proyectos",
-                        color = Color.White,
-                        fontSize = 18.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(25.dp))
-
-                Button(
-                    onClick = {
-
-                    },
-                    Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(size = 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E4AAB),
-                        contentColor = Color(0xFF2E4AAB)
-                    )
-                ) {
-                    Text(
-                        text = "Ver proyectos",
-                        color = Color.White,
-                        fontSize = 18.sp
-                    )
+                if(viewModel.usuario.rol == "Administrador"){
+                    viewModel.usuario.usuarioId?.let { HomeAdmin(navController, usuarioActualId = it) }
+                }else{
+                    HomeNoAdmin()
                 }
             }
 
         }
+    }
+}
+
+
+@Composable
+fun HomeAdmin(navController : NavController, usuarioActualId: Int){
+    Button(
+        onClick = {
+
+        },
+        Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        shape = RoundedCornerShape(size = 10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF2E4AAB),
+            contentColor = Color(0xFF2E4AAB)
+        )
+    ) {
+        Text(
+            text = "Crear Proyectos",
+            color = Color.White,
+            fontSize = 18.sp
+        )
+    }
+
+    Spacer(modifier = Modifier.height(25.dp))
+
+    Button(
+        onClick = {
+
+        },
+        Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        shape = RoundedCornerShape(size = 10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF2E4AAB),
+            contentColor = Color(0xFF2E4AAB)
+        )
+    ) {
+        Text(
+            text = "Gestionar proyectos",
+            color = Color.White,
+            fontSize = 18.sp
+        )
+    }
+
+    Spacer(modifier = Modifier.height(25.dp))
+
+    Button(
+        onClick = {
+            navController.navigate("${Destination.RegistroUsuario.route}/${usuarioActualId}")
+        },
+        Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        shape = RoundedCornerShape(size = 10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF2E4AAB),
+            contentColor = Color(0xFF2E4AAB)
+        )
+    ) {
+        Text(
+            text = "Crear Usuarios",
+            color = Color.White,
+            fontSize = 18.sp
+        )
+    }
+
+    Spacer(modifier = Modifier.height(25.dp))
+
+    Button(
+        onClick = {
+
+        },
+        Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        shape = RoundedCornerShape(size = 10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF2E4AAB),
+            contentColor = Color(0xFF2E4AAB)
+        )
+    ) {
+        Text(
+            text = "Gestionar Usuarios",
+            color = Color.White,
+            fontSize = 18.sp
+        )
+    }
+}
+
+@Composable
+fun HomeNoAdmin(){
+    Spacer(modifier = Modifier.height(25.dp))
+
+    Button(
+        onClick = {
+
+        },
+        Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        shape = RoundedCornerShape(size = 10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF2E4AAB),
+            contentColor = Color(0xFF2E4AAB)
+        )
+    ) {
+        Text(
+            text = "Ver proyectos",
+            color = Color.White,
+            fontSize = 18.sp
+        )
     }
 }

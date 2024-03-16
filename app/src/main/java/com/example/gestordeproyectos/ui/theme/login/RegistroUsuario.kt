@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Email
@@ -56,7 +58,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
+fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel(), usuarioActualId: Int) {
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val contrasenaConfirmacion = remember { mutableStateOf("") }
@@ -66,9 +68,10 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
     val allFieldsCompleted = remember {
         mutableStateOf(false)
     } // Si todo los campos estan validando
+    val scrollState = rememberScrollState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().verticalScroll(scrollState).height(900.dp)) {
             Box(
                 modifier = Modifier
                     .background(Color(0xFF2E4AAB))
@@ -135,6 +138,25 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                     if (!viewModel.nombreCompletoError && viewModel.nombreCompleto.isBlank()) {
                         Text(
                             text = "Debe ingresar un nombre completo.", color = Color.Red
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(value = viewModel.rol,
+                        onValueChange = { viewModel.rol = it },
+                        label = { Text("Rol") },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Badge, contentDescription = "Rol"
+                            )
+                        })
+                    if (!viewModel.rolError && viewModel.rol.isBlank()) {
+                        Text(
+                            text = "Debe ingresar un rol.", color = Color.Red
                         )
                     }
 
@@ -274,8 +296,8 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                 )
             }
             LaunchedEffect(Unit) {
-                delay(5000) // Delay de 5 segundos
-                navController.navigate(Destination.Login.route)
+                delay(3000) // Delay de 3 segundos
+                navController.navigate("${Destination.Home.route}/${usuarioActualId}")
             }
 
         }

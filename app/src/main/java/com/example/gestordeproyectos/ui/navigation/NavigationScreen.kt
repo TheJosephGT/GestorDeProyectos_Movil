@@ -1,13 +1,7 @@
 package com.example.gestordeproyectos.ui.navigation
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresExtension
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,20 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -39,7 +27,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.gestordeproyectos.R
 import com.example.gestordeproyectos.ui.theme.home.Home
 import com.example.gestordeproyectos.ui.theme.login.LoginScreen
 import com.example.gestordeproyectos.ui.theme.login.RegisterScreen
@@ -81,10 +68,14 @@ fun AppNavigation(navController: NavHostController) {
         ) { capturar ->
             val id = capturar.arguments?.getInt("id") ?: 0
 
-            Home(usuarioId = id)
+            Home(usuarioId = id, navController = navController)
         }
-        composable(Destination.RegistroUsuario.route){
-            RegisterScreen(navController)
+        composable(
+            "${Destination.RegistroUsuario.route}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ){capturar ->
+            val id = capturar.arguments?.getInt("id") ?: 0
+            RegisterScreen(usuarioActualId = id, navController = navController)
         }
     }
 }
