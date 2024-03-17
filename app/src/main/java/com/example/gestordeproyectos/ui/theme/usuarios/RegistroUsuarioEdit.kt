@@ -56,7 +56,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel = hiltViewModel(), usuarioActualId: Int, onSaveClick: () -> Unit) {
+fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel = hiltViewModel(), usuarioId: Int, onSaveClick: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val contrasenaConfirmacion = remember { mutableStateOf("") }
@@ -68,9 +68,9 @@ fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel =
     } // Si todo los campos estan validando
     val scrollState = rememberScrollState()
 
-    remember {
-        viewModel.getUsuarioById(usuarioActualId)
-        0
+    DisposableEffect(Unit) {
+        viewModel.getUsuarioById(usuarioId)
+        onDispose {}
     }
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {
@@ -101,7 +101,7 @@ fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel =
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Editar usuario", style = TextStyle(
+                        text = "Edite el usuario", style = TextStyle(
                             fontSize = 20.sp, fontWeight = FontWeight.Medium, color = Color.Black
                         ), modifier = Modifier.align(Alignment.Start)
                     )
@@ -211,6 +211,30 @@ fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel =
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+
+                    OutlinedTextField(
+                        value = contrasenaConfirmacion.value,
+                        onValueChange = { contrasenaConfirmacion.value = it },
+                        label = { Text("Confirmar contraseña") },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Lock, contentDescription = "Confirmar Contraseña"
+                            )
+                        },
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                    if (contrasenaConfirmacion.value != viewModel.clave) {
+                        Text(
+                            text = "Las contraseñas no coinciden.", color = Color.Red
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
                     // validacion para el boton
                     allFieldsCompleted.value =
                         viewModel.nickName.isNotBlank() && viewModel.nombreCompleto.isNotBlank() && viewModel.correo.isNotBlank() && viewModel.clave.isNotBlank() && viewModel.clave.length >= 6 && contrasenaConfirmacion.value == viewModel.clave
@@ -219,7 +243,7 @@ fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel =
                         onClick = {
                             keyboardController?.hide()
                             if (allFieldsCompleted.value && viewModel.ValidarRegistro() && viewModel.ValidarRegistro()) {
-                                viewModel.send()
+                                viewModel.updateUsuario()
                                 onSaveClick()
                                 registroExitoso.value = true
                             }
@@ -277,7 +301,6 @@ fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel =
             }
             LaunchedEffect(Unit) {
                 delay(3000) // Delay de 3 segundos
-                navController.navigate("${Destination.Home.route}/${usuarioActualId}")
             }
 
         }

@@ -98,8 +98,8 @@ fun AppNavigation(navController: NavHostController, viewModel: LoginViewModel = 
         ) { capturar ->
             val usuarioId = capturar.arguments?.getInt("id") ?: 0
 
-            RegisterScreenEdit(usuarioActualId = usuarioId, navController = navController) {
-                navController.navigate(Destination.ConsultaUsuarios.route)
+            RegisterScreenEdit(usuarioId = usuarioId, navController = navController) {
+                navController.navigate(Destination.Login.route)
             }
         }
 

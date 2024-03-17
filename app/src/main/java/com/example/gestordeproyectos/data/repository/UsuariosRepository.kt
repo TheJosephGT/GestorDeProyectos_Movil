@@ -29,8 +29,24 @@ class UsuariosRepository @Inject constructor(
     }
 
 
-    suspend fun getUsuarioById(id: Int): UsuariosDto? {
-        return api.getUsuarioById(id)
+    fun getUsuarioId(id: Int): Flow<Resource<UsuariosDto>> = flow {
+        try {
+            emit(Resource.Loading())
+
+            val usuario =
+                api.getUsuarioById(id)
+
+            emit(Resource.Success(usuario))
+        } catch (e: HttpException) {
+            //error general HTTP
+            emit(Resource.Error(e.message ?: "Error HTTP GENERAL"))
+        } catch (e: IOException) {
+            //debe verificar tu conexion a internet
+            emit(Resource.Error(e.message ?: "verificar tu conexion a internet"))
+        }
     }
     suspend fun postUsuarios(usuario: UsuariosDto) = api.postUsuarios(usuario)
+    suspend fun putUsuario(id:Int, usuario: UsuariosDto) {
+        api.putUsuario(id, usuario)
+    }
 }

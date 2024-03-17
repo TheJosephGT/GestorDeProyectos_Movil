@@ -33,8 +33,10 @@ fun Consulta(usuarios: List<UsuariosDto>, navController: NavController, onUsuari
 
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(usuarios) { usuario ->
-                UsuarioItem(usuario, navController = navController){
-                    onUsuarioClick(it)
+                if(usuario.activo){
+                    UsuarioItem(usuario, navController = navController){
+                        onUsuarioClick(it)
+                    }
                 }
             }
         }

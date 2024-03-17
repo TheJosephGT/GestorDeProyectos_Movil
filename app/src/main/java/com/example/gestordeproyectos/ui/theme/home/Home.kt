@@ -3,8 +3,10 @@ package com.example.gestordeproyectos.ui.theme.home
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +42,7 @@ fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavControll
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val usuario = uiState.usuarios.singleOrNull {
-        it.correo == viewModel.auth.currentUser?.email
+        it.correo == viewModel.auth.currentUser?.email && it.activo
     }
 
 
@@ -49,8 +51,8 @@ fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavControll
             modifier = Modifier
                 .background(Color(0xFF2E4AAB))
                 .fillMaxWidth()
-                .height(270.dp))
-        {
+                .height(270.dp)
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -69,6 +71,18 @@ fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavControll
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
+
+            Text(
+                text = "Cerrar sesión",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = Color.White
+                ),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 16.dp, bottom = 16.dp)
+                    .clickable { viewModel.singOut(){navController.navigate(Destination.Login.route)} }
+            )
         }
 
         Box(
@@ -89,7 +103,7 @@ fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavControll
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Gestor de tareas",
+                        text = "Gestor de tareas - ${usuario?.nickName}",
                         style = TextStyle(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
@@ -105,29 +119,7 @@ fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavControll
                 }else{
                     HomeNoAdmin()
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-                        navController.navigate(Destination.Login.route)},
-                    Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(size = 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E4AAB),
-                        contentColor = Color(0xFF2E4AAB)
-                    )
-                ) {
-                    Text(
-                        text = "Cerrar sesion",
-                        color = Color.White,
-                        fontSize = 18.sp
-                    )
-                }
             }
-
         }
     }
 }

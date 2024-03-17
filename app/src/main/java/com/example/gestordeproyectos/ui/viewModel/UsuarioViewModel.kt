@@ -37,8 +37,7 @@ data class UsuarioListState(
 class LoginViewModel @Inject constructor(
     private val usuariosRepository: UsuariosRepository
 ) : ViewModel() {
-    var usuario by mutableStateOf(UsuariosDto())
-    var usuarioId by mutableStateOf(0)
+    var usuarioId by mutableStateOf(1)
     var nickName by mutableStateOf("")
     var nombreCompleto by mutableStateOf("")
     var correo by mutableStateOf("")
@@ -106,18 +105,24 @@ class LoginViewModel @Inject constructor(
     fun createUserWithEmailAndPassword(correo: String, clave:String, home: () -> Unit){
         if(_loading.value == false){
             _loading.value = true
-            auth.createUserWithEmailAndPassword(correo, clave)
+            val authNewUser = FirebaseAuth.getInstance()
+            authNewUser.createUserWithEmailAndPassword(correo, clave)
                 .addOnCompleteListener { task ->
                     if(task.isSuccessful){
+                        Log.d("Se ejecuto el register", "Usuario creado con éxito: ${task.result?.user?.uid}")
+                        authNewUser.signOut()
                         home()
                     }else{
-                        Log.d("Se ejecuto el register", "createUserWithEmailAndPassword: ${task.result.toString()}")
+                        Log.d("Se ejecuto el register", "createUserWithEmailAndPassword: ${task.exception?.message}")
                     }
                     _loading.value = false
                 }
         }
     }
-
+    fun singOut(login: () -> Unit){
+        Firebase.auth.signOut()
+        login()
+    }
     init {
         cargar()
     }
@@ -145,7 +150,6 @@ class LoginViewModel @Inject constructor(
         if (ValidarRegistro()) {
             viewModelScope.launch {
                 val usuarios = UsuariosDto(
-                    usuarioId = usuarioId,
                     nickName = nickName,
                     nombreCompleto = nombreCompleto,
                     correo = correo,
@@ -161,12 +165,49 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun updateUsuario(){
+        if (ValidarRegistro()) {
+            viewModelScope.launch {
+                usuariosRepository.putUsuario(
+                    usuarioId, UsuariosDto(
+                        usuarioId = usuarioId,
+                        nickName = nickName,
+                        nombreCompleto = nombreCompleto,
+                        correo = correo,
+                        rol = rol,
+                        clave = clave
+                    )
+                )
+                clear()
+                cargar()
+            }
+        } else {
+            registerError = true
+        }
+    }
 
     fun getUsuarioById(id: Int) {
-
-        viewModelScope.launch {
-            usuario = usuariosRepository.getUsuarioById(id)!!
-        }
+        usuarioId = id
+        clear()
+        usuariosRepository.getUsuarioId(usuarioId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+                is Resource.Success -> {
+                        _uiState.update{ it.copy(usuario = result.data)
+                        }
+                    nickName = uiState.value.usuario!!.nickName
+                    nombreCompleto = uiState.value.usuario!!.nombreCompleto
+                    correo = uiState.value.usuario!!.correo
+                    rol = uiState.value.usuario!!.rol
+                    clave = uiState.value.usuario!!.clave
+                }
+                is Resource.Error -> {
+                    _uiState.update { it.copy(error = result.message ?: "Error desconocido") }
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun clear(){

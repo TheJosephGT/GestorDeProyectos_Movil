@@ -58,6 +58,7 @@ import kotlinx.coroutines.delay
 @Composable
 
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -174,15 +175,13 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                                     navController.navigate(Destination.Home.route)
                                 }
 
-                               /* val usuario = uiState.usuarios.singleOrNull {
+                               /*val usuario = uiState.usuarios.singleOrNull {
                                     it.correo == viewModel.correo && it.clave == viewModel.clave && it.activo
                                 }
 
-
                                 if (usuario != null) {
-                                    viewModel.singInWithEmailAndPassword(usuario.correo, usuario.clave){
-                                        navController.navigate(Destination.Home.route)
-                                    }
+                                    viewModel.singInWithEmailAndPassword(viewModel.correo, viewModel.clave)
+                                    navController.navigate(Destination.Home.route)
                                 }*/
                             } else {
                                 viewModel.loginError = true
