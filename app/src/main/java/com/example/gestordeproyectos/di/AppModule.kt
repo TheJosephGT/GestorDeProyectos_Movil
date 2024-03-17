@@ -1,6 +1,6 @@
 package com.example.gestordeproyectos.di
 
-import com.example.gestordeproyectos.data.UsuarioApi
+import com.example.gestordeproyectos.data.GestorApi
 import com.example.gestordeproyectos.data.repository.UsuariosRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -22,17 +22,17 @@ object AppModule {
     }
     @Singleton
     @Provides
-    fun providesUsuariosApi(moshi: Moshi): UsuarioApi {
+    fun providesUsuariosApi(moshi: Moshi): GestorApi {
         return Retrofit.Builder()
-            .baseUrl("http://gestorapinew.somee.com/")
+            .baseUrl("http://www.gestortareasapi.somee.com/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-            .create(UsuarioApi::class.java)
+            .create(GestorApi::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideUsuariosRepository(usuarioApi: UsuarioApi): UsuariosRepository {
+    fun provideUsuariosRepository(usuarioApi: GestorApi): UsuariosRepository {
         return UsuariosRepository(usuarioApi)
     }
 

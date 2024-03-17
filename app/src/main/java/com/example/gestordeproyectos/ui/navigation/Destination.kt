@@ -24,9 +24,14 @@ sealed class Destination(val route: String, val icon: ImageVector, val title: St
         route = "RegistroUsuario", icon = Icons.Filled.Star,
         title = "RegistroUsuario"
     )
-    object RegistrarProyecto : Destination(
-        route = "RegistrarProyecto", icon = Icons.Filled.Star,
-        title = "RegistrarProyecto"
+    object ConsultaUsuarios : Destination(
+        route = "Consulta", icon = Icons.Filled.Email,
+        title = "Consulta"
+    )
+
+    object UpdateRegistroUsuarios : Destination(
+        route = "Registro_Update", icon = Icons.Filled.Email,
+        title = "Registro_Update"
     )
 
 

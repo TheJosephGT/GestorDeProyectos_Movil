@@ -1,6 +1,8 @@
 package com.example.gestordeproyectos.ui.viewModel
 
+import android.content.SharedPreferences
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,18 +12,20 @@ import androidx.lifecycle.ViewModel
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.data.repository.UsuariosRepository
 import com.example.gestordeproyectos.ui.util.Resource
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 data class UsuarioListState(
     val isLoading: Boolean = false,
     val usuarios: List<UsuariosDto> = emptyList(),
@@ -34,6 +38,7 @@ class LoginViewModel @Inject constructor(
     private val usuariosRepository: UsuariosRepository
 ) : ViewModel() {
     var usuario by mutableStateOf(UsuariosDto())
+    var usuarioId by mutableStateOf(0)
     var nickName by mutableStateOf("")
     var nombreCompleto by mutableStateOf("")
     var correo by mutableStateOf("")
@@ -49,15 +54,16 @@ class LoginViewModel @Inject constructor(
     var loginError by mutableStateOf(false)
     var registerError by mutableStateOf(false)
 
+    val auth: FirebaseAuth = Firebase.auth
+    private val _loading = mutableStateOf(false)
+
     fun ValidarLogin(): Boolean {
 
         correoError = correo.isNotEmpty()
         claveError = clave.isNotEmpty()
 
-        return correoError && claveError && uiState.value.usuarios.any { it.correo == correo && it.clave == clave }
+        return correoError && claveError
     }
-
-
     fun ValidarRegistro(): Boolean {
 
         nickNameError = nickName.isNotEmpty()
@@ -72,6 +78,45 @@ class LoginViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(UsuarioListState())
     val uiState: StateFlow<UsuarioListState> = _uiState.asStateFlow()
+
+    val usuarios: StateFlow<Resource<List<UsuariosDto>>> = usuariosRepository.getUsuarios().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = Resource.Loading()
+    )
+
+    fun singInWithEmailAndPassword(correo: String, clave:String, home: () -> Unit){
+        viewModelScope.launch {
+            try {
+                auth.signInWithEmailAndPassword(correo, clave)
+                    .addOnCompleteListener { task ->
+                        if(task.isSuccessful){
+                            Log.d("Se ejecuto el Login", "singInWithEmailAndPassword logueado!!")
+                            home()
+                        }else{
+                            Log.d("Se ejecuto el Login", "singInWithEmailAndPassword: ${task.result.toString()}")
+                        }
+                    }
+            }catch (ex: Exception){
+                Log.d("Se ejecuto el Login", "singInWithEmailAndPassword: ${ex.message}")
+            }
+        }
+    }
+
+    fun createUserWithEmailAndPassword(correo: String, clave:String, home: () -> Unit){
+        if(_loading.value == false){
+            _loading.value = true
+            auth.createUserWithEmailAndPassword(correo, clave)
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+                        home()
+                    }else{
+                        Log.d("Se ejecuto el register", "createUserWithEmailAndPassword: ${task.result.toString()}")
+                    }
+                    _loading.value = false
+                }
+        }
+    }
 
     init {
         cargar()
@@ -100,6 +145,7 @@ class LoginViewModel @Inject constructor(
         if (ValidarRegistro()) {
             viewModelScope.launch {
                 val usuarios = UsuariosDto(
+                    usuarioId = usuarioId,
                     nickName = nickName,
                     nombreCompleto = nombreCompleto,
                     correo = correo,
@@ -117,6 +163,7 @@ class LoginViewModel @Inject constructor(
 
 
     fun getUsuarioById(id: Int) {
+
         viewModelScope.launch {
             usuario = usuariosRepository.getUsuarioById(id)!!
         }

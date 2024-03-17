@@ -15,10 +15,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -28,8 +32,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gestordeproyectos.ui.theme.home.Home
-import com.example.gestordeproyectos.ui.theme.login.LoginScreen
-import com.example.gestordeproyectos.ui.theme.login.RegisterScreen
+import com.example.gestordeproyectos.ui.theme.usuarios.Consulta
+import com.example.gestordeproyectos.ui.theme.usuarios.LoginScreen
+import com.example.gestordeproyectos.ui.theme.usuarios.RegisterScreen
+import com.example.gestordeproyectos.ui.theme.usuarios.RegisterScreenEdit
+import com.example.gestordeproyectos.ui.util.Resource
+import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -53,30 +62,47 @@ fun AppScreen() {
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun AppNavigation(navController: NavHostController) {
-
+fun AppNavigation(navController: NavHostController, viewModel: LoginViewModel = hiltViewModel()) {
     NavHost(
         navController,
-        startDestination = Destination.Login.route,
+        startDestination = if (FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
+            Destination.Login.route
+        } else {
+            Destination.Home.route
+        }
     ) {
         composable(Destination.Login.route) {
             LoginScreen(navController)
         }
+        composable(Destination.Home.route) {
+            Home(navController = navController)
+        }
+        composable(Destination.RegistroUsuario.route){
+            RegisterScreen(navController = navController)
+        }
+
+        composable(Destination.ConsultaUsuarios.route) {
+            val usuariosResource by viewModel.usuarios.collectAsState(initial = Resource.Loading())
+            val usuarios = usuariosResource.data
+
+            if (usuarios != null) {
+                Consulta(usuarios = usuarios, navController){
+                        id -> navController.navigate(Destination.UpdateRegistroUsuarios.route + "/${id}")
+                }
+            }
+        }
+
         composable(
-            "${Destination.Home.route}/{id}",
+            route = Destination.UpdateRegistroUsuarios.route + "/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { capturar ->
-            val id = capturar.arguments?.getInt("id") ?: 0
+            val usuarioId = capturar.arguments?.getInt("id") ?: 0
 
-            Home(usuarioId = id, navController = navController)
+            RegisterScreenEdit(usuarioActualId = usuarioId, navController = navController) {
+                navController.navigate(Destination.ConsultaUsuarios.route)
+            }
         }
-        composable(
-            "${Destination.RegistroUsuario.route}/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
-        ){capturar ->
-            val id = capturar.arguments?.getInt("id") ?: 0
-            RegisterScreen(usuarioActualId = id, navController = navController)
-        }
+
     }
 }
 

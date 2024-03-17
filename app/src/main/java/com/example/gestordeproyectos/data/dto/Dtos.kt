@@ -1,8 +1,7 @@
 package com.example.gestordeproyectos.data.dto
-
 data class UsuariosDto(
     val usuarioId: Int? = null,
-    val nickName: String = "",
+    var nickName: String = "",
     val nombreCompleto: String = "",
     val correo: String = "",
     val clave: String = "",

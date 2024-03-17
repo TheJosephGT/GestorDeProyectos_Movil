@@ -6,16 +6,13 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.PUT
 import retrofit2.http.Path
 
-interface UsuarioApi {
+interface GestorApi {
     @GET("api/Usuarios")
     suspend fun getUsuarios():List<UsuariosDto>
     @GET("api/Usuarios/{id}")
     suspend fun getUsuarioById(@Path("id") id: Int): UsuariosDto?
     @POST("api/Usuarios")
     suspend fun postUsuarios(@Body usuario: UsuariosDto): Response<UsuariosDto>
-    @PUT("api/Usuarios/{id}")
-    suspend fun putUsuario(@Path("id") id:Int, @Body usuario: UsuariosDto): Response<Unit>
 }

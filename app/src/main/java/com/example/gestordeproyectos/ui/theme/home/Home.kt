@@ -16,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,20 +26,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel(), navController: NavController) {
-    DisposableEffect(Unit) {
-        viewModel.getUsuarioById(usuarioId)
-        viewModel.cargar()
-        onDispose {}
+fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavController) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val usuario = uiState.usuarios.singleOrNull {
+        it.correo == viewModel.auth.currentUser?.email
     }
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -96,10 +100,31 @@ fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel(), navControl
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if(viewModel.usuario.rol == "Administrador"){
-                    viewModel.usuario.usuarioId?.let { HomeAdmin(navController, usuarioActualId = it) }
+                if(usuario?.rol == "Administrador"){
+                    HomeAdmin(navController)
                 }else{
                     HomeNoAdmin()
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate(Destination.Login.route)},
+                    Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(size = 10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF2E4AAB),
+                        contentColor = Color(0xFF2E4AAB)
+                    )
+                ) {
+                    Text(
+                        text = "Cerrar sesion",
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
                 }
             }
 
@@ -109,7 +134,7 @@ fun Home(usuarioId: Int, viewModel: LoginViewModel = hiltViewModel(), navControl
 
 
 @Composable
-fun HomeAdmin(navController : NavController, usuarioActualId: Int){
+fun HomeAdmin(navController : NavController){
     Button(
         onClick = {
 
@@ -133,9 +158,7 @@ fun HomeAdmin(navController : NavController, usuarioActualId: Int){
     Spacer(modifier = Modifier.height(25.dp))
 
     Button(
-        onClick = {
-
-        },
+        onClick = {},
         Modifier
             .fillMaxWidth()
             .height(50.dp),
@@ -156,7 +179,7 @@ fun HomeAdmin(navController : NavController, usuarioActualId: Int){
 
     Button(
         onClick = {
-            navController.navigate("${Destination.RegistroUsuario.route}/${usuarioActualId}")
+            navController.navigate(Destination.RegistroUsuario.route)
         },
         Modifier
             .fillMaxWidth()
@@ -177,9 +200,7 @@ fun HomeAdmin(navController : NavController, usuarioActualId: Int){
     Spacer(modifier = Modifier.height(25.dp))
 
     Button(
-        onClick = {
-
-        },
+        onClick = { navController.navigate(Destination.ConsultaUsuarios.route) },
         Modifier
             .fillMaxWidth()
             .height(50.dp),

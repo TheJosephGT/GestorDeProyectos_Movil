@@ -1,6 +1,6 @@
 package com.example.gestordeproyectos.data.repository
 
-import com.example.gestordeproyectos.data.UsuarioApi
+import com.example.gestordeproyectos.data.GestorApi
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.ui.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -10,9 +10,10 @@ import java.io.IOException
 import javax.inject.Inject
 
 class UsuariosRepository @Inject constructor(
-    private val api: UsuarioApi
+    private val api: GestorApi
 ) {
     fun getUsuarios(): Flow<Resource<List<UsuariosDto>>> = flow {
+        println("Pasando por ususario:")
         try {
             emit(Resource.Loading())
 
@@ -32,5 +33,4 @@ class UsuariosRepository @Inject constructor(
         return api.getUsuarioById(id)
     }
     suspend fun postUsuarios(usuario: UsuariosDto) = api.postUsuarios(usuario)
-    suspend fun putUsuario(id:Int, usuario: UsuariosDto) = api.putUsuario(id, usuario)
 }

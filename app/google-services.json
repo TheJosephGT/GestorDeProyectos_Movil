@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "609286567177",
+    "project_id": "gestortareaslogin",
+    "storage_bucket": "gestortareaslogin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609286567177:android:1338105f827f64ded2cfd8",
+        "android_client_info": {
+          "package_name": "com.example.gestordeproyectos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADY-PIqOhAa28FAcLBs9bzZmilzznFy00"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

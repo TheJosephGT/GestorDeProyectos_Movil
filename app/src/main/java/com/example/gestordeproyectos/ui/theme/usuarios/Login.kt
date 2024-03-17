@@ -1,10 +1,9 @@
-package com.example.gestordeproyectos.ui.theme.login
+package com.example.gestordeproyectos.ui.theme.usuarios
 
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,10 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -43,7 +40,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,6 +49,8 @@ import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 import kotlinx.coroutines.delay
 
+
+
 //@Preview(showBackground = true, showSystemUi = true)
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -60,7 +58,6 @@ import kotlinx.coroutines.delay
 @Composable
 
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -173,15 +170,20 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         onClick = {
                             keyboardController?.hide()
                             if (viewModel.ValidarLogin()) {
+                                viewModel.singInWithEmailAndPassword(viewModel.correo, viewModel.clave){
+                                    navController.navigate(Destination.Home.route)
+                                }
 
-                                val usuario = uiState.usuarios.singleOrNull {
+                               /* val usuario = uiState.usuarios.singleOrNull {
                                     it.correo == viewModel.correo && it.clave == viewModel.clave && it.activo
                                 }
 
-                                println(uiState.usuarios.count())
+
                                 if (usuario != null) {
-                                    navController.navigate("${Destination.Home.route}/${usuario.usuarioId}")
-                                }
+                                    viewModel.singInWithEmailAndPassword(usuario.correo, usuario.clave){
+                                        navController.navigate(Destination.Home.route)
+                                    }
+                                }*/
                             } else {
                                 viewModel.loginError = true
                             }

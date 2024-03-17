@@ -1,13 +1,11 @@
-package com.example.gestordeproyectos.ui.theme.login
+package com.example.gestordeproyectos.ui.theme.usuarios
 
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,7 +43,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,7 +55,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel(), usuarioActualId: Int) {
+fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val contrasenaConfirmacion = remember { mutableStateOf("") }
@@ -241,6 +238,9 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                             keyboardController?.hide()
                             if (allFieldsCompleted.value && viewModel.ValidarRegistro() && viewModel.ValidarRegistro()) {
                                 viewModel.send()
+                                viewModel.createUserWithEmailAndPassword(viewModel.correo, viewModel.clave){
+                                    navController.navigate(Destination.Home.route)
+                                }
                                 registroExitoso.value = true
                             }
                         },
@@ -297,7 +297,6 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
             }
             LaunchedEffect(Unit) {
                 delay(3000) // Delay de 3 segundos
-                navController.navigate("${Destination.Home.route}/${usuarioActualId}")
             }
 
         }
