@@ -59,7 +59,6 @@ import kotlinx.coroutines.delay
 fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel = hiltViewModel(), usuarioId: Int, onSaveClick: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val contrasenaConfirmacion = remember { mutableStateOf("") }
     val registroExitoso = remember {
         mutableStateOf(false)
     }
@@ -169,6 +168,8 @@ fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel =
                         onValueChange = { viewModel.correo = it },
                         label = { Text("Correo Electrónico") },
                         singleLine = true,
+                        enabled = false,
+                        textStyle = TextStyle(color = Color.Gray),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = {
@@ -193,6 +194,8 @@ fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel =
                         onValueChange = { viewModel.clave = it },
                         label = { Text("Contraseña") },
                         singleLine = true,
+                        enabled = false,
+                        textStyle = TextStyle(color = Color.Gray),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = {
@@ -211,33 +214,9 @@ fun RegisterScreenEdit(navController: NavController, viewModel: LoginViewModel =
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-
-                    OutlinedTextField(
-                        value = contrasenaConfirmacion.value,
-                        onValueChange = { contrasenaConfirmacion.value = it },
-                        label = { Text("Confirmar contraseña") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                        modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Lock, contentDescription = "Confirmar Contraseña"
-                            )
-                        },
-                        visualTransformation = PasswordVisualTransformation()
-                    )
-                    if (contrasenaConfirmacion.value != viewModel.clave) {
-                        Text(
-                            text = "Las contraseñas no coinciden.", color = Color.Red
-                        )
-                    }
-
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
                     // validacion para el boton
                     allFieldsCompleted.value =
-                        viewModel.nickName.isNotBlank() && viewModel.nombreCompleto.isNotBlank() && viewModel.correo.isNotBlank() && viewModel.clave.isNotBlank() && viewModel.clave.length >= 6 && contrasenaConfirmacion.value == viewModel.clave
+                        viewModel.nickName.isNotBlank() && viewModel.nombreCompleto.isNotBlank() && viewModel.correo.isNotBlank() && viewModel.clave.isNotBlank() && viewModel.clave.length >= 6
 
                     Button(
                         onClick = {
