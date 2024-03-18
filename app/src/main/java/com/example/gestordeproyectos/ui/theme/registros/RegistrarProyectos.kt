@@ -34,6 +34,7 @@ fun RegistrarProyectos() {
                 .height(60.dp),
             contentAlignment = Alignment.Center
         ) {
+
             Text(
                 text = "ProTasker",
                 style = TextStyle(

@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -75,6 +77,12 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                     .fillMaxWidth()
                     .height(200.dp)
             ) {
+                IconButton(
+                    onClick = { navController.navigateUp() }, // Reemplaza esto con la acción de navegación correcta
+                    modifier = Modifier.align(Alignment.TopStart).padding(start = 16.dp)
+                ) {
+                    Icon(Icons.Filled.ArrowBack, contentDescription = "Atrás")
+                }
                 Text(
                     text = "ProTasker", style = TextStyle(
                         fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White

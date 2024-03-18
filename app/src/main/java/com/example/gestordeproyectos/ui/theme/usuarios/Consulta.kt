@@ -18,7 +18,13 @@ import androidx.navigation.NavController
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.Alignment
 
 @Composable
 fun Consulta(usuarios: List<UsuariosDto>, navController: NavController, onUsuarioClick: (Int) -> Unit) {
@@ -27,7 +33,21 @@ fun Consulta(usuarios: List<UsuariosDto>, navController: NavController, onUsuari
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Text(text = "Lista de usuarios", style = MaterialTheme.typography.titleMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Lista de usuarios",
+                style = MaterialTheme.typography.titleMedium
+            )
+            IconButton(
+                onClick = { navController.navigateUp() }
+            ) {
+                Icon(Icons.Filled.ArrowBack, contentDescription = "Atrás")
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -57,7 +77,9 @@ fun UsuarioItem(
             .clickable(onClick = { usuario.usuarioId?.let { onUsuarioClick(it) } }),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).clickable(onClick = { usuario.usuarioId?.let { onUsuarioClick(it) } }),
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable(onClick = { usuario.usuarioId?.let { onUsuarioClick(it) } }),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(text = usuario.nickName, style = MaterialTheme.typography.titleMedium)
