@@ -7,16 +7,14 @@ data class UsuariosDto(
     val clave: String = "",
     val rol: String = "",
     val activo: Boolean = true,
-    val usuarioProyectos: List<UsuarioProyectos> = listOf()
 )
-data class UsuarioProyectos(
+data class UsuarioProyectosDto(
     val usuarioProyectoId: Int? = null,
     val proyectoId: Int? = null,
     val usuarioId: Int? = null,
     val activo: Boolean = true,
-    val usuarioTareas: List<UsuarioTareas> = listOf()
 )
-data class UsuarioTareas(
+data class UsuarioTareasDto(
     val usuarioTareasId: Int? = null,
     val tareaId: String = "",
     val usuarioId: String = "",
@@ -26,7 +24,7 @@ data class UsuarioTareas(
 
 // -----------------
 
-data class Tareas(
+data class TareasDto(
     val tareaId: Int? = null,
     val nombre: String = "",
     val descripcion: String = "",
@@ -36,21 +34,18 @@ data class Tareas(
     val prioridad: String = "",
     val activo: Boolean = true
 )
-data class TareasProyecto(
+data class TareasProyectoDto(
     val tareasProyectoId: Int? = null,
     val proyectoId: Int? = null,
     val tareaId: Int? = null
 )
 
-data class Proyectos(
+data class ProyectosDto(
     val proyectoId: Int? = null,
     val titulo: String = "",
     val descripcion: String = "",
     val estado: String = "",
     val fechaCreacion: String = "",
     val progreso: Double,
-    val creador: Int? = null,
     val activo: Boolean = true,
-    val usuarioProyectos: List<UsuarioProyectos> = listOf(),
-    val tareasProyecto: List<TareasProyecto> = listOf()
 )

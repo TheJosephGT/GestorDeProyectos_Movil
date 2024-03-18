@@ -1,6 +1,7 @@
 package com.example.gestordeproyectos.data.repository
 
 import com.example.gestordeproyectos.data.GestorApi
+import com.example.gestordeproyectos.data.dto.UsuarioProyectosDto
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.ui.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -9,16 +10,16 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class UsuariosRepository @Inject constructor(
+class UsuarioProyectos @Inject constructor(
     private val api: GestorApi
 ) {
-    fun getUsuarios(): Flow<Resource<List<UsuariosDto>>> = flow {
+    fun getUsuarioProyectos(): Flow<Resource<List<UsuarioProyectosDto>>> = flow {
         try {
             emit(Resource.Loading())
 
-            val usuario = api.getUsuarios()
+            val usuarioProyectos = api.getUsuarioProyectos()
 
-            emit(Resource.Success(usuario))
+            emit(Resource.Success(usuarioProyectos))
         } catch (e: HttpException) {
             emit(Resource.Error(e.message ?: "Error HTTP"))
         } catch (e: IOException) {
@@ -26,14 +27,14 @@ class UsuariosRepository @Inject constructor(
             emit(Resource.Error(e.message ?: "verificar tu conexion a internet"))
         }
     }
-    fun getUsuarioId(id: Int): Flow<Resource<UsuariosDto>> = flow {
+    fun getUsuarioProyectosById(id: Int): Flow<Resource<UsuarioProyectosDto>> = flow {
         try {
             emit(Resource.Loading())
 
-            val usuario =
-                api.getUsuarioById(id)
+            val usuarioProyecto =
+                api.getUsuarioProyectosById(id)
 
-            emit(Resource.Success(usuario))
+            emit(Resource.Success(usuarioProyecto))
         } catch (e: HttpException) {
             //error general HTTP
             emit(Resource.Error(e.message ?: "Error HTTP GENERAL"))
@@ -42,8 +43,8 @@ class UsuariosRepository @Inject constructor(
             emit(Resource.Error(e.message ?: "verificar tu conexion a internet"))
         }
     }
-    suspend fun postUsuarios(usuario: UsuariosDto) = api.postUsuarios(usuario)
-    suspend fun putUsuario(id:Int, usuario: UsuariosDto) {
-        api.putUsuario(id, usuario)
+    suspend fun postUsuarioProyectos(usuarioProyecto: UsuarioProyectosDto) = api.postUsuarioProyectos(usuarioProyecto)
+    suspend fun putUsuarioProyectos(id:Int, usuarioProyecto: UsuarioProyectosDto) {
+        api.putUsuarioProyectos(id, usuarioProyecto)
     }
 }

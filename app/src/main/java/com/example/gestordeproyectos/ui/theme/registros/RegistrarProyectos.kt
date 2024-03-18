@@ -44,15 +44,37 @@ fun RegistrarProyectos() {
                 ),
             )
         }
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
+
+            Button(
+                onClick = {
+
+                },
+                Modifier
+                    .height(50.dp),
+                shape = RoundedCornerShape(size = 10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF2E4AAB),
+                    contentColor = Color(0xFF2E4AAB)
+                )
+            ) {
+                Text(
+                    text = "Crear proyecto",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Text(
-                text = "Registro proyecto",
+                text = "REGISTRA UN NUEVO PROYECTO",
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
@@ -60,6 +82,8 @@ fun RegistrarProyectos() {
                 ),
                 modifier = Modifier.align(Alignment.Start)
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = "",
@@ -88,6 +112,18 @@ fun RegistrarProyectos() {
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
+                label = { Text("Seleccionar rol participantes") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                leadingIcon = { Icon(Icons.Filled.Group, contentDescription = "Participante") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
                 label = { Text("Seleccionar participante") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
@@ -95,41 +131,7 @@ fun RegistrarProyectos() {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(all = 8.dp)
-            ) {
-                Card(
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(40.dp),
-                    shape = RoundedCornerShape(size = 6.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0x57BBC0C7))
-                ) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                        Text(
-                            text = "Jorge",
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            )
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Seleccionar rol") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                    modifier = Modifier.width(160.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
@@ -145,11 +147,74 @@ fun RegistrarProyectos() {
                 )
             ) {
                 Text(
-                    text = "Crear",
+                    text = "Agregar participante",
                     color = Color.White,
                     fontSize = 18.sp
                 )
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "USUARIOS SELECCIONADOS",
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black
+                ),
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            UsuariosSeleccionadosScreen()
         }
     }
+}
+
+@Composable
+fun UsuariosSeleccionadosScreen(){
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(all = 8.dp)
+    ) {
+        Card(
+            modifier = Modifier
+                .width(120.dp)
+                .height(40.dp),
+            shape = RoundedCornerShape(size = 6.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0x57BBC0C7))
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Text(
+                    text = "Jorge",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Button(
+            onClick = {
+
+            },
+            Modifier
+                .height(40.dp),
+            shape = RoundedCornerShape(size = 6.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF2E4AAB),
+                contentColor = Color(0xFF2E4AAB)
+            )
+        ) {
+            Text(
+                text = "Eliminar",
+                color = Color.White,
+                fontSize = 14.sp
+            )
+        }
+    }
+
 }

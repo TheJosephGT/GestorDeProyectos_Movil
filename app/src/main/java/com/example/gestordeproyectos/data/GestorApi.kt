@@ -1,6 +1,8 @@
 package com.example.gestordeproyectos.data
 
 
+import com.example.gestordeproyectos.data.dto.ProyectosDto
+import com.example.gestordeproyectos.data.dto.UsuarioProyectosDto
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -10,6 +12,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface GestorApi {
+    //Usuarios
     @GET("api/Usuarios")
     suspend fun getUsuarios():List<UsuariosDto>
     @GET("api/Usuarios/{id}")
@@ -18,4 +21,24 @@ interface GestorApi {
     suspend fun postUsuarios(@Body usuario: UsuariosDto): Response<UsuariosDto>
     @PUT("/api/Usuarios/{id}")
     suspend fun putUsuario(@Path("id") id:Int, @Body usuario: UsuariosDto): Response<Unit>
+
+    //Proyectos:
+    @GET("api/Proyectos")
+    suspend fun getProyectos():List<ProyectosDto>
+    @GET("api/Proyectos/{id}")
+    suspend fun getProyectoById(@Path("id") id: Int): ProyectosDto
+    @POST("api/Proyectos")
+    suspend fun postProyectos(@Body proyecto: ProyectosDto): Response<ProyectosDto>
+    @PUT("/api/Proyectos/{id}")
+    suspend fun putProyecto(@Path("id") id:Int, @Body proyecto: ProyectosDto): Response<Unit>
+
+    //UsuarioProyectos:
+    @GET("api/UsuarioProyectos")
+    suspend fun getUsuarioProyectos():List<UsuarioProyectosDto>
+    @GET("api/UsuarioProyectos/{id}")
+    suspend fun getUsuarioProyectosById(@Path("id") id: Int): UsuarioProyectosDto
+    @POST("api/UsuarioProyectos")
+    suspend fun postUsuarioProyectos(@Body usuarioProyecto: UsuarioProyectosDto): Response<UsuarioProyectosDto>
+    @PUT("/api/UsuarioProyectos/{id}")
+    suspend fun putUsuarioProyectos(@Path("id") id:Int, @Body usuarioProyecto: UsuarioProyectosDto): Response<Unit>
 }
