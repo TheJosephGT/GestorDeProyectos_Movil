@@ -171,18 +171,15 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         onClick = {
                             keyboardController?.hide()
                             if (viewModel.ValidarLogin()) {
-                                viewModel.singInWithEmailAndPassword(viewModel.correo, viewModel.clave){
-                                    navController.navigate(Destination.Home.route)
-                                }
-
-                               /*val usuario = uiState.usuarios.singleOrNull {
+                                val usuario = uiState.usuarios.singleOrNull {
                                     it.correo == viewModel.correo && it.clave == viewModel.clave && it.activo
                                 }
 
-                                if (usuario != null) {
-                                    viewModel.singInWithEmailAndPassword(viewModel.correo, viewModel.clave)
-                                    navController.navigate(Destination.Home.route)
-                                }*/
+                                if(usuario != null){
+                                    viewModel.singInWithEmailAndPassword(viewModel.correo, viewModel.clave){
+                                        navController.navigate(Destination.Home.route)
+                                    }
+                                }
                             } else {
                                 viewModel.loginError = true
                             }

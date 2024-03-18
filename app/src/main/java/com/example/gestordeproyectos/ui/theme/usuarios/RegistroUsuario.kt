@@ -78,7 +78,7 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
                     .height(200.dp)
             ) {
                 IconButton(
-                    onClick = { navController.navigateUp() }, // Reemplaza esto con la acción de navegación correcta
+                    onClick = { navController.navigateUp() },
                     modifier = Modifier.align(Alignment.TopStart).padding(start = 16.dp)
                 ) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Atrás")
