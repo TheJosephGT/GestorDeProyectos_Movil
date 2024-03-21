@@ -1,4 +1,5 @@
 package com.example.gestordeproyectos.ui.theme.registros
+
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresExtension
@@ -54,7 +55,11 @@ import com.example.gestordeproyectos.ui.viewModel.ProyectoViewModel
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
-fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewModel = hiltViewModel(), viewModelUsuario: LoginViewModel = hiltViewModel()) {
+fun RegistrarProyectos(
+    navController: NavController,
+    viewModel: ProyectoViewModel = hiltViewModel(),
+    viewModelUsuario: LoginViewModel = hiltViewModel()
+) {
     val uiStateUsuario by viewModelUsuario.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollState = rememberScrollState()
@@ -76,7 +81,11 @@ fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewMode
         Icons.Filled.KeyboardArrowDown
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState)}) {
+    // Definir estados para indicar si se ha tocado o no cada campo
+    var tituloError by remember { mutableStateOf(false) }
+    var descripcionError by remember { mutableStateOf(false) }
+
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -118,9 +127,18 @@ fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewMode
 
                 Button(
                     onClick = {
-                        keyboardController?.hide()
-                        viewModel.send()
-                        navController.navigate(Destination.Home.route)
+                        if (!tituloError && !descripcionError && viewModel.titulo.isNotBlank() && viewModel.descripcion.isNotBlank()) { // Verificar si no hay errores en los campos y si no están en blanco
+                            keyboardController?.hide()
+                            viewModel.send()
+                            navController.navigate(Destination.Home.route)
+                        } else {
+                            if (viewModel.titulo.isBlank()) {
+                                tituloError = true
+                            }
+                            if (viewModel.descripcion.isBlank()) {
+                                descripcionError = true
+                            }
+                        }
                     },
                     Modifier
                         .height(50.dp),
@@ -128,7 +146,8 @@ fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewMode
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF2E4AAB),
                         contentColor = Color(0xFF2E4AAB)
-                    )
+                    ),
+                    enabled = !(tituloError || descripcionError)
                 ) {
                     Text(
                         text = "Crear proyecto",
@@ -136,6 +155,7 @@ fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewMode
                         fontSize = 18.sp
                     )
                 }
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -153,11 +173,13 @@ fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewMode
 
                 OutlinedTextField(
                     value = viewModel.titulo,
-                    onValueChange = {viewModel.titulo = it},
+                    onValueChange = {
+                        viewModel.titulo = it
+                        tituloError = it.isBlank()
+                    },
                     label = { Text("Nombre del proyecto") },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                    leadingIcon = { Icon(Icons.Filled.Work, contentDescription = "Proyecto") },
+                    isError = tituloError,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -165,12 +187,21 @@ fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewMode
 
                 OutlinedTextField(
                     value = viewModel.descripcion,
-                    onValueChange = {viewModel.descripcion = it},
+                    onValueChange = {
+                        viewModel.descripcion = it;
+                        descripcionError = it.isBlank()
+                    },
                     label = { Text("Descripción") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                    leadingIcon = { Icon(Icons.Filled.Description, contentDescription = "Descripción") },
-                    modifier = Modifier.fillMaxWidth()
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.Description,
+                            contentDescription = "Descripción"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = viewModel.titulo.isBlank()
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -223,7 +254,10 @@ fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewMode
                             },
                         label = { Text("Seleccionar participante") },
                         trailingIcon = {
-                            Icon(icon, "", Modifier.clickable { expandedNickName = !expandedNickName })
+                            Icon(
+                                icon,
+                                "",
+                                Modifier.clickable { expandedNickName = !expandedNickName })
                         },
                         readOnly = true,
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
@@ -252,16 +286,18 @@ fun RegistrarProyectos(navController: NavController, viewModel: ProyectoViewMode
                 Button(
                     onClick = {
                         keyboardController?.hide()
-                        val usuario = uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
-                        if(usuario != null){
-                            val participanteProyecto = ParticipantesProyectosDTO(usuarioId = usuario.usuarioId)
+                        val usuario =
+                            uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
+                        if (usuario != null) {
+                            val participanteProyecto =
+                                ParticipantesProyectosDTO(usuarioId = usuario.usuarioId)
                             viewModel.participantes.add(participanteProyecto)
                             participantesSeleccionados.add(usuario)
 
                         }
                         rolSeleccionado = ""
                         nickNameSeleccionado = ""
-                              },
+                    },
                     Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -307,7 +343,7 @@ fun UsuariosSeleccionadosScreen(usuarios: List<UsuariosDto>) {
 
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(usuarios) { usuario ->
-                    UsuariosSeleccionadosItem(usuario)
+                UsuariosSeleccionadosItem(usuario)
             }
         }
     }
@@ -334,6 +370,7 @@ fun UsuariosSeleccionadosItem(
         }
     }
 }
+
 
 /*@Composable
 fun UsuariosSeleccionadosScreen(usuarios: List<UsuariosDto>){

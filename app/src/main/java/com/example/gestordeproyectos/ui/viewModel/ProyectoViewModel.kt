@@ -45,6 +45,9 @@ class ProyectoViewModel @Inject constructor(
     var progreso by mutableStateOf(0)
     var participantes by mutableStateOf(mutableListOf<ParticipantesProyectosDTO>())
 
+    var tituloError by mutableStateOf(true)
+    var descripcionError by mutableStateOf(true)
+
     private val _uiState = MutableStateFlow(ProyectoListState())
     val uiState: StateFlow<ProyectoListState> = _uiState.asStateFlow()
 
@@ -79,23 +82,35 @@ class ProyectoViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun ValidarProyecto(): Boolean {
+        tituloError = titulo.isNotBlank()
+        descripcionError = descripcion.isNotBlank()
+
+        return tituloError && descripcionError
+    }
+
     fun send() {
         viewModelScope.launch {
-            println("Lista de participantes antes de enviar el proyecto: $participantes")
-            val proyectos = ProyectosDto(
-                titulo = titulo,
-                descripcion = descripcion,
-                estado = estado,
-                fechaCreacion = fechaCreacion,
-                progreso = progreso,
-                participantes = participantes
-            )
-            proyectosRepository.postProyecto(proyectos)
-            cargar()
-            clear()
-            println("Proyecto enviado correctamente")
+            if (ValidarProyecto()) {
+                println("Lista de participantes antes de enviar el proyecto: $participantes")
+                val proyectos = ProyectosDto(
+                    titulo = titulo,
+                    descripcion = descripcion,
+                    estado = estado,
+                    fechaCreacion = fechaCreacion,
+                    progreso = progreso,
+                    participantes = participantes
+                )
+                proyectosRepository.postProyecto(proyectos)
+                cargar()
+                clear()
+                println("Proyecto enviado correctamente")
+            } else {
+                println("No se puede enviar el proyecto porque algunos campos están vacíos.")
+            }
         }
     }
+
 
     fun clear(){
         titulo = ""
