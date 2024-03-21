@@ -79,12 +79,11 @@ fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavControll
                     color = Color.White
                 ),
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 16.dp, bottom = 16.dp)
-                    .clickable { viewModel.singOut(){navController.navigate(Destination.Login.route)} }
+                    .align(Alignment.TopEnd)
+                    .padding(end = 16.dp, bottom = 16.dp)
+                    .clickable { viewModel.singOut() { navController.navigate(Destination.Login.route) } }
             )
         }
-
         Box(
             modifier = Modifier
                 .background(Color.White)
