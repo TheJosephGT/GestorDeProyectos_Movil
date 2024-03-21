@@ -142,6 +142,8 @@ class LoginViewModel @Inject constructor(
                 is Resource.Error -> {
                     _uiState.update { it.copy(error = result.message ?: "Error desconocido") }
                 }
+
+                else -> {}
             }
         }.launchIn(viewModelScope)
     }
@@ -206,6 +208,8 @@ class LoginViewModel @Inject constructor(
                 is Resource.Error -> {
                     _uiState.update { it.copy(error = result.message ?: "Error desconocido") }
                 }
+
+                else -> {}
             }
         }.launchIn(viewModelScope)
     }

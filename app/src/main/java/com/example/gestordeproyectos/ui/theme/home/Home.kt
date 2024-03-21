@@ -129,7 +129,7 @@ fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavControll
 fun HomeAdmin(navController : NavController){
     Button(
         onClick = {
-
+                  navController.navigate(Destination.RegistroProyectos.route)
         },
         Modifier
             .fillMaxWidth()

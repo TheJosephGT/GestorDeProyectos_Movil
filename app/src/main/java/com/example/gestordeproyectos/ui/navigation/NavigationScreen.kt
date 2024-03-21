@@ -32,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gestordeproyectos.ui.theme.home.Home
+import com.example.gestordeproyectos.ui.theme.registros.RegistrarProyectos
 import com.example.gestordeproyectos.ui.theme.usuarios.Consulta
 import com.example.gestordeproyectos.ui.theme.usuarios.LoginScreen
 import com.example.gestordeproyectos.ui.theme.usuarios.RegisterScreen
@@ -80,7 +81,9 @@ fun AppNavigation(navController: NavHostController, viewModel: LoginViewModel = 
         composable(Destination.RegistroUsuario.route){
             RegisterScreen(navController = navController)
         }
-
+        composable(Destination.RegistroProyectos.route){
+            RegistrarProyectos(navController = navController)
+        }
         composable(Destination.ConsultaUsuarios.route) {
             val usuariosResource by viewModel.usuarios.collectAsState(initial = Resource.Loading())
             val usuarios = usuariosResource.data
@@ -91,7 +94,6 @@ fun AppNavigation(navController: NavHostController, viewModel: LoginViewModel = 
                 }
             }
         }
-
         composable(
             route = Destination.UpdateRegistroUsuarios.route + "/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
