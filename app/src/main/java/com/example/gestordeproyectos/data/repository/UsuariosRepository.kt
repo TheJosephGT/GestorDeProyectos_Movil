@@ -1,6 +1,7 @@
 package com.example.gestordeproyectos.data.repository
 
 import com.example.gestordeproyectos.data.GestorApi
+import com.example.gestordeproyectos.data.dto.ProyectosDto
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.ui.util.Resource
 import kotlinx.coroutines.flow.Flow

@@ -51,6 +51,9 @@ class ProyectoViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ProyectoListState())
     val uiState: StateFlow<ProyectoListState> = _uiState.asStateFlow()
 
+    private val _ListParticipantesProyecto = MutableStateFlow(UsuarioListState())
+    val ListParticipantesProyecto: StateFlow<UsuarioListState> = _ListParticipantesProyecto.asStateFlow()
+
     val proyectos: StateFlow<Resource<List<ProyectosDto>>> = proyectosRepository.getProyectos().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -75,6 +78,27 @@ class ProyectoViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _uiState.update { it.copy(error = result.message ?: "Error desconocido") }
+                }
+
+                else -> {}
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun cargarUsuarios(id: Int) {
+        proyectosRepository.getParticipantesProyecto(id).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _ListParticipantesProyecto.update { it.copy(isLoading = true) }
+                }
+
+                is Resource.Success -> {
+                    _ListParticipantesProyecto.update { it.copy(usuarios = result.data ?: emptyList()) }
+
+                }
+
+                is Resource.Error -> {
+                    _ListParticipantesProyecto.update { it.copy(error = result.message ?: "Error desconocido") }
                 }
 
                 else -> {}
@@ -108,6 +132,60 @@ class ProyectoViewModel @Inject constructor(
             } else {
                 println("No se puede enviar el proyecto porque algunos campos están vacíos.")
             }
+        }
+    }
+
+    fun updateProyecto(){
+        if(ValidarProyecto()){
+            viewModelScope.launch {
+                proyectosRepository.putProyecto(
+                    proyectoId, ProyectosDto(
+                        proyectoId = proyectoId,
+                        titulo = titulo,
+                        descripcion = descripcion,
+                        estado = estado,
+                        fechaCreacion = fechaCreacion,
+                        progreso = progreso,
+                        participantes = participantes
+                    )
+                )
+                clear()
+                cargar()
+            }
+        }
+    }
+
+    fun getProyectoId(id: Int) {
+        proyectoId = id
+        clear()
+        proyectosRepository.getProyectoId(proyectoId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+                is Resource.Success -> {
+                    _uiState.update{ it.copy(proyecto = result.data)
+                    }
+                    titulo = uiState.value.proyecto!!.titulo
+                    descripcion = uiState.value.proyecto!!.descripcion
+                    estado = uiState.value.proyecto!!.estado
+                    fechaCreacion = uiState.value.proyecto!!.fechaCreacion
+                    progreso = uiState.value.proyecto!!.progreso!!
+                    participantes = uiState.value.proyecto!!.participantes
+                }
+                is Resource.Error -> {
+                    _uiState.update { it.copy(error = result.message ?: "Error desconocido") }
+                }
+
+                else -> {}
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun deleteProyecto(id: Int) {
+        viewModelScope.launch {
+            proyectosRepository.deleteProyectos(id)
+            cargar()
         }
     }
 

@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,11 +56,17 @@ import com.example.gestordeproyectos.ui.viewModel.ProyectoViewModel
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
-fun RegistrarProyectos(
+fun RegistrarProyectosEdit(
+    idProyectoActual : Int,
     navController: NavController,
     viewModel: ProyectoViewModel = hiltViewModel(),
-    viewModelUsuario: LoginViewModel = hiltViewModel()
+    viewModelUsuario: LoginViewModel = hiltViewModel(),
+    onSaveClick: () -> Unit
 ) {
+    DisposableEffect(Unit) {
+        viewModel.getProyectoId(idProyectoActual)
+        onDispose {}
+    }
     val uiStateUsuario by viewModelUsuario.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollState = rememberScrollState()
@@ -67,6 +74,11 @@ fun RegistrarProyectos(
     var participantesSeleccionados by remember {
         mutableStateOf(mutableListOf<UsuariosDto>())
     }
+
+    participantesSeleccionados = viewModel.participantes.mapNotNull { participante ->
+        // Buscar el UsuarioDTO con el mismo id que el usuarioId del participante
+        uiStateUsuario.usuarios.find { usuario -> usuario.usuarioId == participante.usuarioId }
+    }.toMutableList()
 
 
     //Dropdown
@@ -129,7 +141,8 @@ fun RegistrarProyectos(
                     onClick = {
                         if (!tituloError && !descripcionError && viewModel.titulo.isNotBlank() && viewModel.descripcion.isNotBlank()) { // Verificar si no hay errores en los campos y si no están en blanco
                             keyboardController?.hide()
-                            viewModel.send()
+                            viewModel.updateProyecto()
+                            onSaveClick()
                             navController.navigate(Destination.Home.route)
                         } else {
                             if (viewModel.titulo.isBlank()) {
@@ -150,7 +163,7 @@ fun RegistrarProyectos(
                     enabled = !(tituloError || descripcionError)
                 ) {
                     Text(
-                        text = "Crear proyecto",
+                        text = "Editar proyecto",
                         color = Color.White,
                         fontSize = 18.sp
                     )
@@ -160,7 +173,7 @@ fun RegistrarProyectos(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "REGISTRA UN NUEVO PROYECTO",
+                    text = "REGISTRA EL PROYECTO",
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
@@ -229,7 +242,7 @@ fun RegistrarProyectos(
                         modifier = Modifier.width(
                             with(LocalDensity.current) { textFiledSize.width.toDp() }
                         )) {
-                        val rolesUsuarios = uiStateUsuario.usuarios.map { it.rol }
+                        val rolesUsuarios = uiStateUsuario.usuarios.map { it.rol }.filter { it != "Administrador" }
                         rolesUsuarios.forEach { label ->
                             DropdownMenuItem(text = { Text(text = label) }, onClick = {
                                 rolSeleccionado = label
@@ -333,7 +346,7 @@ fun RegistrarProyectos(
 }
 
 @Composable
-fun UsuariosSeleccionadosScreen(usuarios: List<UsuariosDto>) {
+fun UsuariosSeleccionadosScreenEdit(usuarios: List<UsuariosDto>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -350,7 +363,7 @@ fun UsuariosSeleccionadosScreen(usuarios: List<UsuariosDto>) {
 }
 
 @Composable
-fun UsuariosSeleccionadosItem(
+fun UsuariosSeleccionadosItemEdit(
     usuario: UsuariosDto
 ) {
     Card(

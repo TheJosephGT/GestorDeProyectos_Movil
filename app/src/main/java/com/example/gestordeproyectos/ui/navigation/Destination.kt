@@ -37,6 +37,14 @@ sealed class Destination(val route: String, val icon: ImageVector, val title: St
         route = "Registro_Proyecto", icon = Icons.Filled.Email,
         title = "Registro_Proyecto"
     )
+    object UpdateRegistroProyectos : Destination(
+        route = "Registro_UpdateProyecto", icon = Icons.Filled.Email,
+        title = "Registro_UpdateProyecto"
+    )
+    object GestionarProyectos : Destination(
+        route = "Gestionar_Proyecto", icon = Icons.Filled.Email,
+        title = "Gestionar_Proyecto"
+    )
 
 
     companion object {

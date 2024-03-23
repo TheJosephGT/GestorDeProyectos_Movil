@@ -63,4 +63,7 @@ class ProyectosRepository @Inject constructor(
     suspend fun putProyecto(id:Int, proyecto: ProyectosDto) {
         api.putProyecto(id, proyecto)
     }
+    suspend fun deleteProyectos(id: Int) : ProyectosDto? {
+        return api.deleteProyectos(id).body()
+    }
 }

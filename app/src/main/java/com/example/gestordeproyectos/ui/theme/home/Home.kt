@@ -149,7 +149,7 @@ fun HomeAdmin(navController : NavController){
     Spacer(modifier = Modifier.height(25.dp))
 
     Button(
-        onClick = {},
+        onClick = { navController.navigate(Destination.GestionarProyectos.route)},
         Modifier
             .fillMaxWidth()
             .height(50.dp),

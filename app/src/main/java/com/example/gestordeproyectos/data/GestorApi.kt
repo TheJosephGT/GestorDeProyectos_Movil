@@ -5,6 +5,7 @@ import com.example.gestordeproyectos.data.dto.ProyectosDto
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -32,4 +33,6 @@ interface GestorApi {
     suspend fun postProyectos(@Body proyecto: ProyectosDto): Response<ProyectosDto>
     @PUT("/api/Proyectos/{id}")
     suspend fun putProyecto(@Path("id") id:Int, @Body proyecto: ProyectosDto): Response<Unit>
+    @DELETE("api/Proyectos/{id}")
+    suspend fun deleteProyectos(@Path("id") id: Int): Response<ProyectosDto>
 }
