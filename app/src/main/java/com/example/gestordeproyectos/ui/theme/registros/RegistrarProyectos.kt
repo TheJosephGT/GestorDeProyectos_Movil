@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -201,7 +202,7 @@ fun RegistrarProyectos(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    isError = viewModel.titulo.isBlank()
+                    isError = descripcionError
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -241,59 +242,64 @@ fun RegistrarProyectos(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Column {
-                    OutlinedTextField(
-                        value = nickNameSeleccionado,
-                        onValueChange = {
-                            nickNameSeleccionado = it
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .onGloballyPositioned { coordinates ->
-                                textFiledSize = coordinates.size.toSize()
+                    Column {
+                        OutlinedTextField(
+                            value = nickNameSeleccionado,
+                            onValueChange = {
+                                nickNameSeleccionado = it
                             },
-                        label = { Text("Seleccionar participante") },
-                        trailingIcon = {
-                            Icon(
-                                icon,
-                                "",
-                                Modifier.clickable { expandedNickName = !expandedNickName })
-                        },
-                        readOnly = true,
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                        enabled = rolSeleccionado.isNotEmpty()
-                    )
-                    DropdownMenu(expanded = expandedNickName,
-                        onDismissRequest = { expandedNickName = false },
-                        modifier = Modifier.width(
-                            with(LocalDensity.current) { textFiledSize.width.toDp() }
-                        )) {
-                        val nombresUsuariosConRolSeleccionado = uiStateUsuario.usuarios
-                            .filter { it.rol == rolSeleccionado }
-                            .map { it.nickName }
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onGloballyPositioned { coordinates ->
+                                    textFiledSize = coordinates.size.toSize()
+                                },
+                            label = { Text("Seleccionar participante") },
+                            trailingIcon = {
+                                Icon(
+                                    icon,
+                                    "",
+                                    Modifier.clickable { expandedNickName = !expandedNickName })
+                            },
+                            readOnly = true,
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                            enabled = rolSeleccionado.isNotEmpty()
+                        )
+                        DropdownMenu(expanded = expandedNickName,
+                            onDismissRequest = { expandedNickName = false },
+                            modifier = Modifier.width(
+                                with(LocalDensity.current) { textFiledSize.width.toDp() }
+                            )) {
+                            val nombresUsuariosConRolSeleccionado = uiStateUsuario.usuarios
+                                .filter { it.rol == rolSeleccionado }
+                                .map { it.nickName }
 
-                        nombresUsuariosConRolSeleccionado.forEach { label ->
-                            DropdownMenuItem(text = { Text(text = label) }, onClick = {
-                                nickNameSeleccionado = label
-                                expandedNickName = false
-                            })
+                            nombresUsuariosConRolSeleccionado.forEach { label ->
+                                DropdownMenuItem(text = { Text(text = label) }, onClick = {
+                                    nickNameSeleccionado = label
+                                    expandedNickName = false
+                                })
+                            }
                         }
                     }
-                }
 
                 Spacer(modifier = Modifier.height(24.dp))
+
+                var usuarioAgregadoMensaje by remember { mutableStateOf("") }
 
                 Button(
                     onClick = {
                         keyboardController?.hide()
-                        val usuario =
-                            uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
+                        val usuario = uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
                         if (usuario != null) {
-                            val participanteProyecto =
-                                ParticipantesProyectosDTO(usuarioId = usuario.usuarioId)
-                            viewModel.participantes.add(participanteProyecto)
-                            participantesSeleccionados.add(usuario)
-
+                            val participanteProyecto = ParticipantesProyectosDTO(usuarioId = usuario.usuarioId)
+                            if (!participantesSeleccionados.contains(usuario)) {
+                                viewModel.participantes.add(participanteProyecto)
+                                participantesSeleccionados.add(usuario)
+                                // Actualizar el mensaje
+                                usuarioAgregadoMensaje = "El usuario ${usuario.nickName} ha sido agregado al proyecto."
+                            } else {
+                                usuarioAgregadoMensaje = "El usuario ya está agregado al proyecto"
+                            }
                         }
                         rolSeleccionado = ""
                         nickNameSeleccionado = ""
@@ -313,6 +319,14 @@ fun RegistrarProyectos(
                         fontSize = 18.sp
                     )
                 }
+                Text(
+                    text = usuarioAgregadoMensaje,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (participantesSeleccionados.any { it.nickName == nickNameSeleccionado }) Color.Red else Color.Green,
+                    )
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
