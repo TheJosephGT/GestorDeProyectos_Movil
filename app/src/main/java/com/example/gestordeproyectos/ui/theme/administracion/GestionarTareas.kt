@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -38,10 +39,10 @@ import com.example.gestordeproyectos.ui.viewModel.TareaViewModel
 fun GestionarTareas(idProyectoActual: Int, viewModel: TareaViewModel = hiltViewModel(), navController: NavController) {
     DisposableEffect(Unit) {
         viewModel.getTareaById(idProyectoActual)
-        viewModel.cargar(idProyectoActual)
+        viewModel.cargarTareasPorIdProyecto(idProyectoActual)
         onDispose {}
     }
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.ListaTareasPorProyecto.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,6 +55,14 @@ fun GestionarTareas(idProyectoActual: Int, viewModel: TareaViewModel = hiltViewM
                 .height(60.dp),
             contentAlignment = Alignment.Center
         ) {
+            IconButton(
+            onClick = { navController.navigateUp() },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 16.dp)
+        ) {
+            Icon(Icons.Filled.ArrowBack, contentDescription = "Atrás")
+        }
             Text(
                 text = "ProTasker",
                 style = TextStyle(
@@ -112,8 +121,9 @@ fun GestionarTareas(idProyectoActual: Int, viewModel: TareaViewModel = hiltViewM
     }
 }
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun TareaItem(tarea: TareasDto, viewModel: ProyectoViewModel = hiltViewModel(), navController: NavController){
+fun TareaItem(tarea: TareasDto, viewModel: TareaViewModel = hiltViewModel(), navController: NavController){
     Card(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -129,7 +139,7 @@ fun TareaItem(tarea: TareasDto, viewModel: ProyectoViewModel = hiltViewModel(), 
                 .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* Aquí pones tu acción de edición */ }) {
+            IconButton(onClick = { navController.navigate(Destination.UpdateRegistroTareas.route + "/${tarea.tareaId}")   }) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Editar",
@@ -154,7 +164,9 @@ fun TareaItem(tarea: TareasDto, viewModel: ProyectoViewModel = hiltViewModel(), 
                     color = Color.Gray
                 )
             }
-            IconButton(onClick = { /* Aquí pones tu acción de edición */ }) {
+            IconButton(onClick = {
+                tarea.tareaId?.let { viewModel.deleteTarea(it) }
+            }) {
 
                 Icon(
                     Icons.Filled.DeleteForever,

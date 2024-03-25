@@ -37,6 +37,7 @@ import com.example.gestordeproyectos.ui.theme.home.Home
 import com.example.gestordeproyectos.ui.theme.registros.RegistrarProyectos
 import com.example.gestordeproyectos.ui.theme.registros.RegistrarProyectosEdit
 import com.example.gestordeproyectos.ui.theme.registros.RegistrarTarea
+import com.example.gestordeproyectos.ui.theme.registros.RegistrarTareaEdit
 import com.example.gestordeproyectos.ui.theme.usuarios.Consulta
 import com.example.gestordeproyectos.ui.theme.usuarios.LoginScreen
 import com.example.gestordeproyectos.ui.theme.usuarios.RegisterScreen
@@ -135,6 +136,16 @@ fun AppNavigation(navController: NavHostController, viewModel: LoginViewModel = 
 
             RegistrarProyectosEdit(idProyectoActual = proyectoId, navController = navController) {
                 navController.navigate(Destination.RegistroProyectos.route)
+            }
+        }
+        composable(
+            route = Destination.UpdateRegistroTareas.route + "/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { capturar ->
+            val tareaId = capturar.arguments?.getInt("id") ?: 0
+
+            RegistrarTareaEdit(idTareaActual = tareaId, navController = navController) {
+                navController.navigate(Destination.GestionarProyectos.route)
             }
         }
     }

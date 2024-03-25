@@ -53,8 +53,36 @@ class TareaViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(TareaListState())
     val uiState: StateFlow<TareaListState> = _uiState.asStateFlow()
 
-    fun cargar(id: Int) {
+    private val _ListaTareasPorProyecto = MutableStateFlow(TareaListState())
+    val ListaTareasPorProyecto: StateFlow<TareaListState> = _ListaTareasPorProyecto.asStateFlow()
+
+    init {
+        cargar()
+    }
+
+    fun cargarTareasPorIdProyecto(id: Int) {
         tareasRepository.getTareasByProyectoId(id).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _ListaTareasPorProyecto.update { it.copy(isLoading = true) }
+                }
+
+                is Resource.Success -> {
+                    _ListaTareasPorProyecto.update { it.copy(tareas = result.data ?: emptyList()) }
+
+                }
+
+                is Resource.Error -> {
+                    _ListaTareasPorProyecto.update { it.copy(error = result.message ?: "Error desconocido") }
+                }
+
+                else -> {}
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun cargar() {
+        tareasRepository.getTareas().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
                     _uiState.update { it.copy(isLoading = true) }
@@ -92,6 +120,7 @@ class TareaViewModel @Inject constructor(
                     participantes = participantes
                 )
                 tareasRepository.postTareas(tareas)
+                cargar()
                 clear()
         }
     }
@@ -110,6 +139,7 @@ class TareaViewModel @Inject constructor(
                         participantes = participantes
                     )
                 )
+                cargar()
                 clear()
             }
         }
@@ -145,6 +175,7 @@ class TareaViewModel @Inject constructor(
     fun deleteTarea(id: Int) {
         viewModelScope.launch {
             tareasRepository.deleteTareas(id)
+            cargar()
         }
     }
 
