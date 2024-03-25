@@ -1,6 +1,8 @@
 package com.example.gestordeproyectos.di
 
 import com.example.gestordeproyectos.data.GestorApi
+import com.example.gestordeproyectos.data.repository.ProyectosRepository
+import com.example.gestordeproyectos.data.repository.TareasRepository
 import com.example.gestordeproyectos.data.repository.UsuariosRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -32,8 +34,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUsuariosRepository(usuarioApi: GestorApi): UsuariosRepository {
-        return UsuariosRepository(usuarioApi)
+    fun provideUsuariosRepository(api: GestorApi): UsuariosRepository {
+        return UsuariosRepository(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProyectosRepository(api: GestorApi): ProyectosRepository {
+        return ProyectosRepository(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTareasRepository(api: GestorApi): TareasRepository {
+        return TareasRepository(api)
     }
 
 }

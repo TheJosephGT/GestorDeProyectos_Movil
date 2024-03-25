@@ -5,9 +5,14 @@ import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,11 +20,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Work
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -38,21 +51,18 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.gestordeproyectos.data.dto.ParticipantesProyectosDTO
 import com.example.gestordeproyectos.data.dto.ParticipantesTareasDTO
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 import com.example.gestordeproyectos.ui.viewModel.ProyectoViewModel
 import com.example.gestordeproyectos.ui.viewModel.TareaViewModel
-import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState",
@@ -60,13 +70,12 @@ import kotlinx.coroutines.flow.map
 )
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun RegistrarTarea(idProyectoActual: Int, navController: NavController, viewModel: TareaViewModel = hiltViewModel(), viewModelProyecto: ProyectoViewModel = hiltViewModel(), viewModelUsuario: LoginViewModel = hiltViewModel()) {
+fun RegistrarTareaEdit(idTareaActual: Int, navController: NavController, viewModel: TareaViewModel = hiltViewModel(), viewModelProyecto: ProyectoViewModel = hiltViewModel(), viewModelUsuario: LoginViewModel = hiltViewModel(), onSaveClick: () -> Unit) {
     DisposableEffect(Unit) {
-        viewModelProyecto.getProyectoId(idProyectoActual)
-        viewModelProyecto.cargarUsuarios(idProyectoActual)
+        viewModel.getTareaById(idTareaActual)
         onDispose {}
     }
-
+    viewModelProyecto.cargarUsuarios(viewModel.proyectoId)
     val ListParticipantesProyecto by viewModelProyecto.ListParticipantesProyecto.collectAsStateWithLifecycle()
     val uiStateUsuario by viewModelUsuario.uiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -75,6 +84,11 @@ fun RegistrarTarea(idProyectoActual: Int, navController: NavController, viewMode
     var participantesSeleccionados by remember {
         mutableStateOf(mutableListOf<UsuariosDto>())
     }
+
+    participantesSeleccionados = viewModel.participantes.mapNotNull { participante ->
+        // Buscar el UsuarioDTO con el mismo id que el usuarioId del participante
+        uiStateUsuario.usuarios.find { usuario -> usuario.usuarioId == participante.usuarioId }
+    }.toMutableList()
 
 
     //Dropdown
@@ -131,8 +145,8 @@ fun RegistrarTarea(idProyectoActual: Int, navController: NavController, viewMode
 
                 Button(
                     onClick = {
-                        viewModel.proyectoId = idProyectoActual
-                        viewModel.send()
+                        viewModel.updateTarea()
+                        onSaveClick()
                         navController.navigate(Destination.Home.route)
                     },
                     Modifier
@@ -144,7 +158,7 @@ fun RegistrarTarea(idProyectoActual: Int, navController: NavController, viewMode
                     )
                 ) {
                     Text(
-                        text = "Crear Tarea",
+                        text = "Editar Tarea",
                         color = Color.White,
                         fontSize = 18.sp
                     )
@@ -153,7 +167,7 @@ fun RegistrarTarea(idProyectoActual: Int, navController: NavController, viewMode
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Registra tarea",
+                    text = "Edita tu tarea",
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
@@ -221,14 +235,14 @@ fun RegistrarTarea(idProyectoActual: Int, navController: NavController, viewMode
                         modifier = Modifier.width(
                             with(LocalDensity.current) { textFiledSize.width.toDp() }
                         )) {
-                    val rolesUsuarios = ListParticipantesProyecto.usuarios.map { it.rol }
-                    rolesUsuarios.forEach { label ->
-                        DropdownMenuItem(text = { Text(text = label) }, onClick = {
-                            rolSeleccionado = label
-                            expandedRol = false
-                        })
+                        val rolesUsuarios = ListParticipantesProyecto.usuarios.map { it.rol }
+                        rolesUsuarios.forEach { label ->
+                            DropdownMenuItem(text = { Text(text = label) }, onClick = {
+                                rolSeleccionado = label
+                                expandedRol = false
+                            })
+                        }
                     }
-                 }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -260,17 +274,17 @@ fun RegistrarTarea(idProyectoActual: Int, navController: NavController, viewMode
                         modifier = Modifier.width(
                             with(LocalDensity.current) { textFiledSize.width.toDp() }
                         )) {
-                    val nombresUsuariosConRolSeleccionado = ListParticipantesProyecto.usuarios
-                        .filter { it.rol == rolSeleccionado }
-                        .map { it.nickName }
+                        val nombresUsuariosConRolSeleccionado = ListParticipantesProyecto.usuarios
+                            .filter { it.rol == rolSeleccionado }
+                            .map { it.nickName }
 
-                    nombresUsuariosConRolSeleccionado.forEach { label ->
-                        DropdownMenuItem(text = { Text(text = label) }, onClick = {
-                            nickNameSeleccionado = label
-                            expandedNickName = false
-                        })
+                        nombresUsuariosConRolSeleccionado.forEach { label ->
+                            DropdownMenuItem(text = { Text(text = label) }, onClick = {
+                                nickNameSeleccionado = label
+                                expandedNickName = false
+                            })
+                        }
                     }
-                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -281,8 +295,8 @@ fun RegistrarTarea(idProyectoActual: Int, navController: NavController, viewMode
                         val usuario = uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
                         if (usuario != null) {
                             val participanteTarea = ParticipantesTareasDTO(usuarioId = usuario.usuarioId)
-                                viewModel.participantes.add(participanteTarea)
-                                participantesSeleccionados.add(usuario)
+                            viewModel.participantes.add(participanteTarea)
+                            participantesSeleccionados.add(usuario)
                         }
                         rolSeleccionado = ""
                         nickNameSeleccionado = ""

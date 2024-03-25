@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gestordeproyectos.data.dto.ParticipantesProyectosDTO
 import com.example.gestordeproyectos.data.dto.ProyectosDto
-import com.example.gestordeproyectos.data.dto.UsuariosDto
 import com.example.gestordeproyectos.data.repository.ProyectosRepository
 import com.example.gestordeproyectos.ui.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,12 +52,6 @@ class ProyectoViewModel @Inject constructor(
 
     private val _ListParticipantesProyecto = MutableStateFlow(UsuarioListState())
     val ListParticipantesProyecto: StateFlow<UsuarioListState> = _ListParticipantesProyecto.asStateFlow()
-
-    val proyectos: StateFlow<Resource<List<ProyectosDto>>> = proyectosRepository.getProyectos().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = Resource.Loading()
-    )
 
     init {
         cargar()

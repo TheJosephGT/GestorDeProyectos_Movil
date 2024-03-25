@@ -18,9 +18,9 @@ data class ParticipantesProyectosDTO(
     val activo: Boolean = true,
 )
 data class ParticipantesTareasDTO(
-    val articipanteTareaId: Int? = null,
-    val tareaId: String = "",
-    val usuarioId: String = "",
+    val participanteTareaId: Int? = null,
+    val tareaId: Int? = null,
+    val usuarioId: Int? = null,
     val activo: Boolean = true
 )
 
@@ -35,7 +35,7 @@ data class TareasDto(
     val estado: String = "",
     val prioridad: String = "",
     val activo: Boolean = true,
-    val participantes: List<ParticipantesTareasDTO> = emptyList()
+    val participantes: MutableList<ParticipantesTareasDTO> = mutableListOf()
 )
 
 data class ProyectosDto(

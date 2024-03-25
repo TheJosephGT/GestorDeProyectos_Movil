@@ -2,6 +2,7 @@ package com.example.gestordeproyectos.data
 
 
 import com.example.gestordeproyectos.data.dto.ProyectosDto
+import com.example.gestordeproyectos.data.dto.TareasDto
 import com.example.gestordeproyectos.data.dto.UsuariosDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -35,4 +36,20 @@ interface GestorApi {
     suspend fun putProyecto(@Path("id") id:Int, @Body proyecto: ProyectosDto): Response<Unit>
     @DELETE("api/Proyectos/{id}")
     suspend fun deleteProyectos(@Path("id") id: Int): Response<ProyectosDto>
+
+    //Tareas:
+    @GET("api/Tareas")
+    suspend fun getTareas():List<TareasDto>
+    @GET("api/Tareas/{id}")
+    suspend fun getTareaById(@Path("id") id: Int): TareasDto
+    @GET("api/Tareas/participantesTarea/{id}")
+    suspend fun getParticipantesTarea(@Path("id") id: Int):List<UsuariosDto>
+    @GET("api/Tareas/TareasPorIdProyecto/{id}")
+    suspend fun getTareasByProyectoId(@Path("id") id: Int):List<TareasDto>
+    @POST("api/Tareas")
+    suspend fun postTareas(@Body tarea: TareasDto): Response<TareasDto>
+    @PUT("/api/Tareas/{id}")
+    suspend fun putTarea(@Path("id") id:Int, @Body tarea: TareasDto): Response<Unit>
+    @DELETE("api/Tareas/{id}")
+    suspend fun deleteTareas(@Path("id") id: Int): Response<TareasDto>
 }
