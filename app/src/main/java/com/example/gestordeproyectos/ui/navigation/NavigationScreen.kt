@@ -32,9 +32,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gestordeproyectos.ui.theme.administracion.GestionarProyectos
+import com.example.gestordeproyectos.ui.theme.administracion.GestionarTareas
 import com.example.gestordeproyectos.ui.theme.home.Home
 import com.example.gestordeproyectos.ui.theme.registros.RegistrarProyectos
 import com.example.gestordeproyectos.ui.theme.registros.RegistrarProyectosEdit
+import com.example.gestordeproyectos.ui.theme.registros.RegistrarTarea
 import com.example.gestordeproyectos.ui.theme.usuarios.Consulta
 import com.example.gestordeproyectos.ui.theme.usuarios.LoginScreen
 import com.example.gestordeproyectos.ui.theme.usuarios.RegisterScreen
@@ -89,6 +91,22 @@ fun AppNavigation(navController: NavHostController, viewModel: LoginViewModel = 
         composable(Destination.GestionarProyectos.route) {
             GestionarProyectos(navController = navController)
         }
+        composable(
+            route = Destination.RegistrarTarea.route + "/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { capturar ->
+            val proyectoId = capturar.arguments?.getInt("id") ?: 0
+
+            RegistrarTarea(idProyectoActual = proyectoId, navController = navController)
+        }
+        composable(
+            route = Destination.GestionarTarea.route + "/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { capturar ->
+            val proyectoId = capturar.arguments?.getInt("id") ?: 0
+
+            GestionarTareas(idProyectoActual = proyectoId, navController = navController)
+        }
         composable(Destination.ConsultaUsuarios.route) {
             val usuariosResource by viewModel.usuarios.collectAsState(initial = Resource.Loading())
             val usuarios = usuariosResource.data
@@ -119,7 +137,6 @@ fun AppNavigation(navController: NavHostController, viewModel: LoginViewModel = 
                 navController.navigate(Destination.RegistroProyectos.route)
             }
         }
-
     }
 }
 

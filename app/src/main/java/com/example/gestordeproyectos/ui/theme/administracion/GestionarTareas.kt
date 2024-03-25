@@ -3,7 +3,6 @@ package com.example.gestordeproyectos.ui.theme.administracion
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +12,7 @@ import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,19 +20,27 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.gestordeproyectos.data.dto.ProyectosDto
+import com.example.gestordeproyectos.data.dto.TareasDto
 import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.viewModel.ProyectoViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.gestordeproyectos.ui.viewModel.TareaViewModel
+
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun GestionarProyectos(viewModel: ProyectoViewModel = hiltViewModel(), navController: NavController) {
+fun GestionarTareas(idProyectoActual: Int, viewModel: TareaViewModel = hiltViewModel(), navController: NavController) {
+    DisposableEffect(Unit) {
+        viewModel.getTareaById(idProyectoActual)
+        viewModel.cargar(idProyectoActual)
+        onDispose {}
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
@@ -56,7 +64,7 @@ fun GestionarProyectos(viewModel: ProyectoViewModel = hiltViewModel(), navContro
             )
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         Column(
             modifier = Modifier
@@ -64,7 +72,7 @@ fun GestionarProyectos(viewModel: ProyectoViewModel = hiltViewModel(), navContro
                 .padding(16.dp)
         ) {
             Text(
-                text = "Proyectos",
+                text = "Tareas pendientes",
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
@@ -73,12 +81,30 @@ fun GestionarProyectos(viewModel: ProyectoViewModel = hiltViewModel(), navContro
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(
+                onClick = { navController.navigate(Destination.RegistrarTarea.route + "/${idProyectoActual}")},
+                Modifier.height(50.dp),
+                shape = RoundedCornerShape(size = 10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF2E4AAB),
+                    contentColor = Color(0xFF2E4AAB)
+                )
+            ) {
+                Text(
+                    text = "Añadir tarea",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(modifier = Modifier.fillMaxWidth()){
-                items(uiState.proyectos) { proyecto ->
-                    if(proyecto.activo){
-                        ProyectoItem(proyecto, navController = navController)
+                items(uiState.tareas) { tarea ->
+                    if(tarea.activo){
+                        TareaItem(tarea, navController = navController)
                     }
                 }
             }
@@ -86,9 +112,8 @@ fun GestionarProyectos(viewModel: ProyectoViewModel = hiltViewModel(), navContro
     }
 }
 
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun ProyectoItem(proyecto: ProyectosDto, viewModel: ProyectoViewModel = hiltViewModel(), navController: NavController){
+fun TareaItem(tarea: TareasDto, viewModel: ProyectoViewModel = hiltViewModel(), navController: NavController){
     Card(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -96,7 +121,7 @@ fun ProyectoItem(proyecto: ProyectosDto, viewModel: ProyectoViewModel = hiltView
             .height(100.dp)
             .shadow(2.dp, RoundedCornerShape(8.dp))
             .background(color = Color(0xFFE6ECF5), shape = RoundedCornerShape(size = 12.dp))
-            .clickable { navController.navigate(Destination.GestionarTarea.route + "/${proyecto.proyectoId}") }
+
     ) {
         Row(
             Modifier
@@ -104,7 +129,7 @@ fun ProyectoItem(proyecto: ProyectosDto, viewModel: ProyectoViewModel = hiltView
                 .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {navController.navigate(Destination.UpdateRegistroProyectos.route + "/${proyecto.proyectoId}")  }) {
+            IconButton(onClick = { /* Aquí pones tu acción de edición */ }) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Editar",
@@ -120,16 +145,16 @@ fun ProyectoItem(proyecto: ProyectosDto, viewModel: ProyectoViewModel = hiltView
                     .padding(end = 16.dp)
             ) {
                 Text(
-                    text = proyecto.titulo,
+                    text = tarea.nombre,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
                 Text(
-                    text = proyecto.descripcion,
+                    text = tarea.descripcion,
                     color = Color.Gray
                 )
             }
-            IconButton(onClick = { proyecto.proyectoId?.let { viewModel.deleteProyecto(it) } }) {
+            IconButton(onClick = { /* Aquí pones tu acción de edición */ }) {
 
                 Icon(
                     Icons.Filled.DeleteForever,
@@ -138,6 +163,7 @@ fun ProyectoItem(proyecto: ProyectosDto, viewModel: ProyectoViewModel = hiltView
                 )
 
             }
+
         }
     }
 }

@@ -242,7 +242,7 @@ fun RegistrarProyectos(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                    Column {
+                Column {
                         OutlinedTextField(
                             value = nickNameSeleccionado,
                             onValueChange = {
