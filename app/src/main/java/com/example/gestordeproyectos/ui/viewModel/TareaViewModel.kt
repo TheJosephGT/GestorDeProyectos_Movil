@@ -49,6 +49,7 @@ class TareaViewModel @Inject constructor(
 
     var nombreError by mutableStateOf(true)
     var descripcionError by mutableStateOf(true)
+    var prioridadError by mutableStateOf(true)
 
     private val _uiState = MutableStateFlow(TareaListState())
     val uiState: StateFlow<TareaListState> = _uiState.asStateFlow()
@@ -59,7 +60,13 @@ class TareaViewModel @Inject constructor(
     init {
         cargar()
     }
+    fun validarTarea(): Boolean {
+        nombreError = nombre.isNotBlank()
+        descripcionError = descripcion.isNotBlank()
+        prioridadError = prioridad.toIntOrNull() != null
 
+        return nombreError && descripcionError && prioridadError
+    }
     fun cargarTareasPorIdProyecto(id: Int) {
         tareasRepository.getTareasByProyectoId(id).onEach { result ->
             when (result) {
@@ -111,7 +118,8 @@ class TareaViewModel @Inject constructor(
 
     fun send() {
         viewModelScope.launch {
-                val tareas = TareasDto(
+            if (validarTarea()) {
+                val tarea = TareasDto(
                     nombre = nombre,
                     proyectoId = proyectoId,
                     descripcion = descripcion,
@@ -119,9 +127,13 @@ class TareaViewModel @Inject constructor(
                     prioridad = prioridad,
                     participantes = participantes
                 )
-                tareasRepository.postTareas(tareas)
+                tareasRepository.postTareas(tarea)
                 cargar()
                 clear()
+                println("Tarea enviada correctamente")
+            } else {
+                println("No se puede enviar la tarea porque algunos campos están vacíos.")
+            }
         }
     }
 
