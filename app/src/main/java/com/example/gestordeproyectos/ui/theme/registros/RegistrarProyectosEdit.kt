@@ -214,7 +214,7 @@ fun RegistrarProyectosEdit(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    isError = viewModel.titulo.isBlank()
+                    isError = descripcionError
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -253,7 +253,6 @@ fun RegistrarProyectosEdit(
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-
                 Column {
                     OutlinedTextField(
                         value = nickNameSeleccionado,
@@ -295,18 +294,22 @@ fun RegistrarProyectosEdit(
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+                var usuarioAgregadoMensaje by remember { mutableStateOf("") }
 
                 Button(
                     onClick = {
                         keyboardController?.hide()
-                        val usuario =
-                            uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
+                        val usuario = uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
                         if (usuario != null) {
-                            val participanteProyecto =
-                                ParticipantesProyectosDTO(usuarioId = usuario.usuarioId)
-                            viewModel.participantes.add(participanteProyecto)
-                            participantesSeleccionados.add(usuario)
-
+                            val participanteProyecto = ParticipantesProyectosDTO(usuarioId = usuario.usuarioId)
+                            if (!participantesSeleccionados.contains(usuario)) {
+                                viewModel.participantes.add(participanteProyecto)
+                                participantesSeleccionados.add(usuario)
+                                // Actualizar el mensaje
+                                usuarioAgregadoMensaje = "El usuario ${usuario.nickName} ha sido agregado al proyecto."
+                            } else {
+                                usuarioAgregadoMensaje = "El usuario ya está agregado al proyecto"
+                            }
                         }
                         rolSeleccionado = ""
                         nickNameSeleccionado = ""
@@ -326,6 +329,15 @@ fun RegistrarProyectosEdit(
                         fontSize = 18.sp
                     )
                 }
+                Text(
+                    text = usuarioAgregadoMensaje,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (participantesSeleccionados.any { it.nickName == nickNameSeleccionado }) Color.Red else Color.Green,
+                    )
+                )
+
 
                 Spacer(modifier = Modifier.height(24.dp))
 
