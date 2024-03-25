@@ -143,7 +143,7 @@ fun RegistrarTarea(
 
                 Button(
                     onClick = {
-                        if (!tituloError && !descripcionError && viewModel.nombre.isNotBlank() && viewModel.descripcion.isNotBlank() && !prioridadError && viewModel.prioridad.isNullOrBlank()) {
+                        if (!tituloError && !descripcionError && viewModel.nombre.isNotBlank() && viewModel.descripcion.isNotBlank() && !prioridadError && viewModel.prioridad.isNotBlank()) {
                             viewModel.proyectoId = idProyectoActual
                             viewModel.send()
                             navController.navigate(Destination.Home.route)

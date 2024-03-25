@@ -63,7 +63,7 @@ class TareaViewModel @Inject constructor(
     fun validarTarea(): Boolean {
         nombreError = nombre.isNotBlank()
         descripcionError = descripcion.isNotBlank()
-        prioridadError = prioridad.toIntOrNull() != null
+        prioridadError = prioridad.isNotBlank()
 
         return nombreError && descripcionError && prioridadError
     }
@@ -109,12 +109,7 @@ class TareaViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun ValidarTarea(): Boolean {
-        nombreError = nombre.isNotBlank()
-        descripcionError = descripcion.isNotBlank()
 
-        return nombreError && descripcionError
-    }
 
     fun send() {
         viewModelScope.launch {
@@ -138,7 +133,7 @@ class TareaViewModel @Inject constructor(
     }
 
     fun updateTarea(){
-        if(ValidarTarea()){
+        if(validarTarea()){
             viewModelScope.launch {
                 tareasRepository.putTarea(
                     tareaId, TareasDto(
