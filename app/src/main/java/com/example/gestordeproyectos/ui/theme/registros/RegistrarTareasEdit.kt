@@ -27,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +53,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -64,7 +67,7 @@ import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 import com.example.gestordeproyectos.ui.viewModel.ProyectoViewModel
 import com.example.gestordeproyectos.ui.viewModel.TareaViewModel
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState",
     "SuspiciousIndentation"
 )
@@ -84,6 +87,10 @@ fun RegistrarTareaEdit(idTareaActual: Int, navController: NavController, viewMod
     var participantesSeleccionados by remember {
         mutableStateOf(mutableListOf<UsuariosDto>())
     }
+    // Definir estados para indicar si se ha tocado o no cada campo
+    var tituloError by remember { mutableStateOf(false) }
+    var descripcionError by remember { mutableStateOf(false) }
+    var prioridadError by remember { mutableStateOf(false) }
 
     participantesSeleccionados = viewModel.participantes.mapNotNull { participante ->
         // Buscar el UsuarioDTO con el mismo id que el usuarioId del participante
@@ -145,9 +152,21 @@ fun RegistrarTareaEdit(idTareaActual: Int, navController: NavController, viewMod
 
                 Button(
                     onClick = {
-                        viewModel.updateTarea()
-                        onSaveClick()
-                        navController.navigate(Destination.Home.route)
+                        if (!tituloError && !descripcionError && viewModel.nombre.isNotBlank() && viewModel.descripcion.isNotBlank() && !prioridadError && viewModel.prioridad.isNotBlank()) {
+                            viewModel.updateTarea()
+                            onSaveClick()
+                            navController.navigate(Destination.Home.route)
+                        } else {
+                            if (viewModel.nombre.isBlank()) {
+                                tituloError = true
+                            }
+                            if (viewModel.descripcion.isBlank()) {
+                                descripcionError = true
+                            }
+                            if (viewModel.prioridad.isNullOrBlank()) {
+                                prioridadError = true
+                            }
+                        }
                     },
                     Modifier
                         .height(50.dp),
@@ -155,7 +174,8 @@ fun RegistrarTareaEdit(idTareaActual: Int, navController: NavController, viewMod
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF2E4AAB),
                         contentColor = Color(0xFF2E4AAB)
-                    )
+                    ),
+                    enabled = !(tituloError || descripcionError)
                 ) {
                     Text(
                         text = "Editar Tarea",
@@ -178,11 +198,15 @@ fun RegistrarTareaEdit(idTareaActual: Int, navController: NavController, viewMod
 
                 OutlinedTextField(
                     value = viewModel.nombre,
-                    onValueChange = {viewModel.nombre = it},
+                    onValueChange = {
+                        viewModel.nombre = it
+                        tituloError = it.isBlank()
+                    },
                     label = { Text("Nombre de la tarea") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                     leadingIcon = { Icon(Icons.Filled.Work, contentDescription = "Proyecto") },
+                    isError = tituloError,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -190,24 +214,47 @@ fun RegistrarTareaEdit(idTareaActual: Int, navController: NavController, viewMod
 
                 OutlinedTextField(
                     value = viewModel.descripcion,
-                    onValueChange = { viewModel.descripcion = it},
+                    onValueChange = {
+                        viewModel.descripcion = it
+                        descripcionError = it.isBlank()
+                    },
                     label = { Text("Descripción") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                    leadingIcon = { Icon(Icons.Filled.Description, contentDescription = "Descripción") },
-                    modifier = Modifier.fillMaxWidth()
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.Description, contentDescription = "Descripción"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = descripcionError
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = viewModel.prioridad,
-                    onValueChange = {viewModel.prioridad = it},
+                    onValueChange = {
+                        viewModel.prioridad = it;
+                        prioridadError = it.isNullOrBlank()
+                    },
                     label = { Text("Prioridad") },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                    leadingIcon = { Icon(Icons.Filled.Description, contentDescription = "Prioridad") },
-                    modifier = Modifier.fillMaxWidth()
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.Description, contentDescription = "Prioridad"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = prioridadError,
+                    colors = if (prioridadError) TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.Red,
+                        unfocusedBorderColor = Color.Red,
+                        errorBorderColor = Color.Red
+                    ) else TextFieldDefaults.outlinedTextFieldColors()
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -288,15 +335,25 @@ fun RegistrarTareaEdit(idTareaActual: Int, navController: NavController, viewMod
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+                var usuarioAgregadoMensaje by remember { mutableStateOf("") }
 
                 Button(
                     onClick = {
                         keyboardController?.hide()
-                        val usuario = uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
+                        val usuario =
+                            uiStateUsuario.usuarios.find { it.nickName == nickNameSeleccionado }
                         if (usuario != null) {
-                            val participanteTarea = ParticipantesTareasDTO(usuarioId = usuario.usuarioId)
-                            viewModel.participantes.add(participanteTarea)
-                            participantesSeleccionados.add(usuario)
+                            val participanteTarea =
+                                ParticipantesTareasDTO(usuarioId = usuario.usuarioId)
+                            if (!participantesSeleccionados.contains(usuario)) {
+                                viewModel.participantes.add(participanteTarea)
+                                participantesSeleccionados.add(usuario)
+                                // Actualizar el mensaje
+                                usuarioAgregadoMensaje =
+                                    "El usuario ${usuario.nickName} ha sido agregado al proyecto."
+                            } else {
+                                usuarioAgregadoMensaje = "El usuario ya está agregado al proyecto"
+                            }
                         }
                         rolSeleccionado = ""
                         nickNameSeleccionado = ""
@@ -316,6 +373,14 @@ fun RegistrarTareaEdit(idTareaActual: Int, navController: NavController, viewMod
                         fontSize = 18.sp
                     )
                 }
+                Text(
+                    text = usuarioAgregadoMensaje,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (participantesSeleccionados.any { it.nickName == nickNameSeleccionado }) Color.Red else Color.Green,
+                    )
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
