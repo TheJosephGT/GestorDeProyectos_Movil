@@ -116,7 +116,7 @@ fun Home(viewModel: LoginViewModel = hiltViewModel(), navController: NavControll
                 if(usuario?.rol == "Administrador"){
                     HomeAdmin(navController)
                 }else{
-                    HomeNoAdmin()
+                    HomeNoAdmin(navController)
                 }
             }
         }
@@ -210,12 +210,12 @@ fun HomeAdmin(navController : NavController){
 }
 
 @Composable
-fun HomeNoAdmin(){
+fun HomeNoAdmin(navController : NavController){
     Spacer(modifier = Modifier.height(25.dp))
 
     Button(
         onClick = {
-
+            navController.navigate(Destination.GestionarProyectos.route)
         },
         Modifier
             .fillMaxWidth()

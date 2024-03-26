@@ -28,6 +28,8 @@ interface GestorApi {
     suspend fun getProyectos():List<ProyectosDto>
     @GET("api/Proyectos/{id}")
     suspend fun getProyectoById(@Path("id") id: Int): ProyectosDto
+    @GET("api/Proyectos/ProyectosByIdUsuario/{id}")
+    suspend fun getProyectosByIdUsuario(@Path("id") id: Int):List<ProyectosDto>
     @GET("api/Proyectos/participantesProyecto/{id}")
     suspend fun getParticipantesProyecto(@Path("id") id: Int):List<UsuariosDto>
     @POST("api/Proyectos")
@@ -42,6 +44,8 @@ interface GestorApi {
     suspend fun getTareas():List<TareasDto>
     @GET("api/Tareas/{id}")
     suspend fun getTareaById(@Path("id") id: Int): TareasDto
+    @GET("api/Tareas/TareasByIdUsuario/{usuarioId}/{proyectoId}")
+    suspend fun getTareasByIdUsuario(@Path("usuarioId") usuarioId: Int, @Path("proyectoId") proyectoId: Int): List<TareasDto>
     @GET("api/Tareas/participantesTarea/{id}")
     suspend fun getParticipantesTarea(@Path("id") id: Int):List<UsuariosDto>
     @GET("api/Tareas/TareasPorIdProyecto/{id}")

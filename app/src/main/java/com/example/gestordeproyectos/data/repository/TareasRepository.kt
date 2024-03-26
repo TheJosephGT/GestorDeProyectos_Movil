@@ -1,5 +1,6 @@
 package com.example.gestordeproyectos.data.repository
 
+import android.util.Log
 import com.example.gestordeproyectos.data.GestorApi
 import com.example.gestordeproyectos.data.dto.ProyectosDto
 import com.example.gestordeproyectos.data.dto.TareasDto
@@ -64,6 +65,21 @@ class TareasRepository @Inject constructor(
             emit(Resource.Loading())
 
             val tareas = api.getTareasByProyectoId(id)
+
+            emit(Resource.Success(tareas))
+        } catch (e: HttpException) {
+            //error general HTTP
+            emit(Resource.Error(e.message ?: "Error HTTP GENERAL"))
+        } catch (e: IOException) {
+            //debe verificar tu conexion a internet
+            emit(Resource.Error(e.message ?: "verificar tu conexion a internet"))
+        }
+    }
+    fun getTareasByIdUsuario(usuarioId: Int, proyectoId: Int): Flow<Resource<List<TareasDto>>> = flow {
+        try {
+            emit(Resource.Loading())
+
+            val tareas = api.getTareasByIdUsuario(usuarioId, proyectoId)
 
             emit(Resource.Success(tareas))
         } catch (e: HttpException) {

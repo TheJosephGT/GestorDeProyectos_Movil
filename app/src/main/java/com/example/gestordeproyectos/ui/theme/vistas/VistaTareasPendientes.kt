@@ -72,7 +72,6 @@ fun VistaTareasPendiente() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Tarjeta del Proyecto Geek Engineer
             Card(
                 modifier = Modifier
                     .padding(vertical = 8.dp)

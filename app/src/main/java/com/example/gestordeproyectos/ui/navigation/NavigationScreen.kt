@@ -42,6 +42,7 @@ import com.example.gestordeproyectos.ui.theme.usuarios.Consulta
 import com.example.gestordeproyectos.ui.theme.usuarios.LoginScreen
 import com.example.gestordeproyectos.ui.theme.usuarios.RegisterScreen
 import com.example.gestordeproyectos.ui.theme.usuarios.RegisterScreenEdit
+import com.example.gestordeproyectos.ui.theme.vistas.DetalleTarea
 import com.example.gestordeproyectos.ui.util.Resource
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -147,6 +148,14 @@ fun AppNavigation(navController: NavHostController, viewModel: LoginViewModel = 
             RegistrarTareaEdit(idTareaActual = tareaId, navController = navController) {
                 navController.navigate(Destination.GestionarProyectos.route)
             }
+        }
+        composable(
+            route = Destination.DetalleTarea.route + "/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { capturar ->
+            val tareaId = capturar.arguments?.getInt("id") ?: 0
+
+            DetalleTarea(idTareaActual = tareaId, navController = navController)
         }
     }
 }

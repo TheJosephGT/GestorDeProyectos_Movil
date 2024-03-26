@@ -53,6 +53,9 @@ class ProyectoViewModel @Inject constructor(
     private val _ListParticipantesProyecto = MutableStateFlow(UsuarioListState())
     val ListParticipantesProyecto: StateFlow<UsuarioListState> = _ListParticipantesProyecto.asStateFlow()
 
+    private val _ListProyectosPorUsuario = MutableStateFlow(ProyectoListState())
+    val ListProyectosPorUsuario: StateFlow<ProyectoListState> = _ListProyectosPorUsuario.asStateFlow()
+
     init {
         cargar()
     }
@@ -92,6 +95,27 @@ class ProyectoViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _ListParticipantesProyecto.update { it.copy(error = result.message ?: "Error desconocido") }
+                }
+
+                else -> {}
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun cargarProyectosPorIdUsuario(id: Int) {
+        proyectosRepository.getProyectosByIdUsuario(id).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _ListProyectosPorUsuario.update { it.copy(isLoading = true) }
+                }
+
+                is Resource.Success -> {
+                    _ListProyectosPorUsuario.update { it.copy(proyectos = result.data ?: emptyList()) }
+
+                }
+
+                is Resource.Error -> {
+                    _ListProyectosPorUsuario.update { it.copy(error = result.message ?: "Error desconocido") }
                 }
 
                 else -> {}

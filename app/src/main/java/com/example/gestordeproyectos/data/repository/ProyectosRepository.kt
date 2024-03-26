@@ -59,6 +59,22 @@ class ProyectosRepository @Inject constructor(
             emit(Resource.Error(e.message ?: "verificar tu conexion a internet"))
         }
     }
+    fun getProyectosByIdUsuario(id: Int): Flow<Resource<List<ProyectosDto>>> = flow {
+        try {
+            emit(Resource.Loading())
+
+            val proyectos =
+                api.getProyectosByIdUsuario(id)
+
+            emit(Resource.Success(proyectos))
+        } catch (e: HttpException) {
+            //error general HTTP
+            emit(Resource.Error(e.message ?: "Error HTTP GENERAL"))
+        } catch (e: IOException) {
+            //debe verificar tu conexion a internet
+            emit(Resource.Error(e.message ?: "verificar tu conexion a internet"))
+        }
+    }
     suspend fun postProyecto(proyecto: ProyectosDto) = api.postProyectos(proyecto)
     suspend fun putProyecto(id:Int, proyecto: ProyectosDto) {
         api.putProyecto(id, proyecto)

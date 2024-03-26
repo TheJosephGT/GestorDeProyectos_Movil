@@ -2,6 +2,7 @@ package com.example.gestordeproyectos.ui.viewModel
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,9 @@ class TareaViewModel @Inject constructor(
     private val _ListaTareasPorProyecto = MutableStateFlow(TareaListState())
     val ListaTareasPorProyecto: StateFlow<TareaListState> = _ListaTareasPorProyecto.asStateFlow()
 
+    private val _ListTareasPorUsuario = MutableStateFlow(TareaListState())
+    val ListTareasPorUsuario: StateFlow<TareaListState> = _ListTareasPorUsuario.asStateFlow()
+
     init {
         cargar()
     }
@@ -81,6 +85,26 @@ class TareaViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _ListaTareasPorProyecto.update { it.copy(error = result.message ?: "Error desconocido") }
+                }
+
+                else -> {}
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun cargarTareasPorIdUsuario(usuarioId: Int, proyectoId: Int) {
+        tareasRepository.getTareasByIdUsuario(usuarioId, proyectoId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _ListTareasPorUsuario.update { it.copy(isLoading = true) }
+                }
+
+                is Resource.Success -> {
+                    _ListTareasPorUsuario.update { it.copy(tareas = result.data ?: emptyList()) }
+                }
+
+                is Resource.Error -> {
+                    _ListTareasPorUsuario.update { it.copy(error = result.message ?: "Error desconocido") }
                 }
 
                 else -> {}

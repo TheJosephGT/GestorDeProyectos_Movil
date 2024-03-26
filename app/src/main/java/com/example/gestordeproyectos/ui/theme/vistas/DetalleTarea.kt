@@ -1,5 +1,8 @@
 package com.example.gestordeproyectos.ui.theme.vistas
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -8,6 +11,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,10 +27,34 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.gestordeproyectos.data.dto.TareasDto
+import com.example.gestordeproyectos.data.dto.UsuariosDto
+import com.example.gestordeproyectos.ui.theme.registros.UsuariosSeleccionadosScreen
+import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
+import com.example.gestordeproyectos.ui.viewModel.TareaViewModel
 
-@Preview(showBackground = true, showSystemUi = true)
+@SuppressLint("MutableCollectionMutableState")
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun DetalleTarea() {
+fun DetalleTarea(idTareaActual: Int, viewModel: TareaViewModel = hiltViewModel(), navController: NavController, viewModelUsuario: LoginViewModel = hiltViewModel()) {
+    DisposableEffect(Unit) {
+        viewModel.getTareaById(idTareaActual)
+        onDispose {}
+    }
+    val uiStateUsuario by viewModelUsuario.uiState.collectAsStateWithLifecycle()
+
+    var participantesSeleccionados by remember {
+        mutableStateOf(mutableListOf<UsuariosDto>())
+    }
+
+    participantesSeleccionados = viewModel.participantes.mapNotNull { participante ->
+        // Buscar el UsuarioDTO con el mismo id que el usuarioId del participante
+        uiStateUsuario.usuarios.find { usuario -> usuario.usuarioId == participante.usuarioId }
+    }.toMutableList()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +110,7 @@ fun DetalleTarea() {
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Lavar la casa",
+                        text = viewModel.nombre,
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
@@ -106,13 +138,13 @@ fun DetalleTarea() {
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "Esta aplicación móvil te ofrece una manera fácil y rápida de buscar información detallada sobre verbos en inglés. Puedes obtener las formas básicas, el pasado participio y el pasado simple de cualquier verbo. Además, proporcionamos definiciones en inglés y la traducción al español para una comprensión más completa.",
+                        text = viewModel.descripcion,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
 
                 IconButton(
-                    onClick = { /* TODO: Handle back action */ },
+                    onClick = { navController.navigateUp() },
                     modifier = Modifier
                         .padding(16.dp)
                         .size(40.dp)
@@ -128,6 +160,19 @@ fun DetalleTarea() {
                 }
 
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Usuarios con la tarea pendiente",
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black
+                ),
+                modifier = Modifier.align(Alignment.Start)
+            )
+            UsuariosSeleccionadosScreen(participantesSeleccionados)
         }
     }
 }
