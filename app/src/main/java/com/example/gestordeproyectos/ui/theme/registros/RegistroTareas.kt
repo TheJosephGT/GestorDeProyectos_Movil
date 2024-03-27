@@ -225,9 +225,7 @@ fun RegistrarTarea(
                     },
                     label = { Text("Prioridad") },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
-                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                     leadingIcon = {
                         Icon(
                             Icons.Filled.Description, contentDescription = "Prioridad"

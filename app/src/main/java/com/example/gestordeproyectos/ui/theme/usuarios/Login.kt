@@ -181,6 +181,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                                     }
                                 }
                             } else {
+                                //AQUI VALIDACION
                                 viewModel.loginError = true
                             }
                         },
