@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.gestordeproyectos.data.dto.TareasDto
 import com.example.gestordeproyectos.data.dto.UsuariosDto
+import com.example.gestordeproyectos.ui.navigation.Destination
 import com.example.gestordeproyectos.ui.theme.registros.UsuariosSeleccionadosScreen
 import com.example.gestordeproyectos.ui.viewModel.LoginViewModel
 import com.example.gestordeproyectos.ui.viewModel.TareaViewModel
@@ -45,6 +46,9 @@ fun DetalleTarea(idTareaActual: Int, viewModel: TareaViewModel = hiltViewModel()
         onDispose {}
     }
     val uiStateUsuario by viewModelUsuario.uiState.collectAsStateWithLifecycle()
+    val usuario = uiStateUsuario.usuarios.singleOrNull {
+        it.correo == viewModelUsuario.auth.currentUser?.email && it.activo
+    }
 
     var participantesSeleccionados by remember {
         mutableStateOf(mutableListOf<UsuariosDto>())
@@ -143,22 +147,49 @@ fun DetalleTarea(idTareaActual: Int, viewModel: TareaViewModel = hiltViewModel()
                     )
                 }
 
-                IconButton(
-                    onClick = { navController.navigateUp() },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF2E4AAB))
-                        .padding(12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Volver",
-                        tint = Color.White
-                    )
-                }
+                Row{
+                    IconButton(
+                        onClick = { navController.navigateUp() },
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF2E4AAB))
+                            .padding(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = Color.White
+                        )
+                    }
 
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    if(usuario != null && usuario.rol != "Administrador"){
+                        Button(
+                            onClick = {
+                                      viewModel.participantes.removeIf{it.usuarioId == usuario.usuarioId && it.activo}
+                                participantesSeleccionados.removeIf{ it.usuarioId == usuario.usuarioId && it.activo }
+                                viewModel.updateTarea()
+                                navController.navigate(Destination.GestionarProyectos.route)
+                            },
+                            Modifier
+                                .height(50.dp),
+                            shape = RoundedCornerShape(size = 10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF2E4AAB),
+                                contentColor = Color(0xFF2E4AAB)
+                            )
+                        ) {
+                            Text(
+                                text = "Marca como completado",
+                                color = Color.White,
+                                fontSize = 18.sp
+                            )
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

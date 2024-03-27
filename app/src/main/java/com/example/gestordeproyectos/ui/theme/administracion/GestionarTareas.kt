@@ -135,7 +135,6 @@ fun GestionarTareasUsuario(idProyectoActual: Int, navController: NavController, 
 
 @Composable
 fun TareaItemUsuario(tarea: TareasDto, navController: NavController, idProyectoActual: Int){
-    var isChecked by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -143,6 +142,7 @@ fun TareaItemUsuario(tarea: TareasDto, navController: NavController, idProyectoA
             .height(100.dp)
             .shadow(2.dp, RoundedCornerShape(8.dp))
             .background(color = Color(0xFFE6ECF5), shape = RoundedCornerShape(size = 12.dp))
+            .clickable { navController.navigate(Destination.DetalleTarea.route + "/${tarea.tareaId}") }
 
     ) {
         Row(
@@ -151,16 +151,6 @@ fun TareaItemUsuario(tarea: TareasDto, navController: NavController, idProyectoA
                 .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { isChecked = !isChecked }) {
-                Icon(
-                    imageVector = if (isChecked) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircleOutline,
-                    contentDescription = "Check",
-                    tint = if (isChecked) MaterialTheme.colorScheme.primary else Color.Gray,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -183,29 +173,6 @@ fun TareaItemUsuario(tarea: TareasDto, navController: NavController, idProyectoA
             )
         }
     }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    Button(
-        onClick = {
-
-        },
-        Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        shape = RoundedCornerShape(size = 10.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF2E4AAB),
-            contentColor = Color(0xFF2E4AAB)
-        )
-    ) {
-        Text(
-            text = "Guardar",
-            color = Color.White,
-            fontSize = 18.sp
-        )
-    }
-
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
