@@ -89,7 +89,7 @@ fun DetalleTarea(idTareaActual: Int, viewModel: TareaViewModel = hiltViewModel()
                 .padding(16.dp)
         ) {
             Text(
-                text = "Detalle de la tareas",
+                text = "Detalle de la tarea",
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
