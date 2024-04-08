@@ -183,7 +183,7 @@ fun DetalleTarea(idTareaActual: Int, viewModel: TareaViewModel = hiltViewModel()
                             )
                         ) {
                             Text(
-                                text = "Marca como completado",
+                                text = "Completado",
                                 color = Color.White,
                                 fontSize = 18.sp
                             )
